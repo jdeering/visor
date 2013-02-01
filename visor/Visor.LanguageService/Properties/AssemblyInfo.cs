@@ -8,9 +8,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("Visor.LanguageService")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("Family Trust Federal Credit Union")]
 [assembly: AssemblyProduct("Visor.LanguageService")]
-[assembly: AssemblyCopyright("")]
+[assembly: AssemblyCopyright("Copyright © Family Trust Federal Credit Union 2013")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -18,6 +18,9 @@ using System.Runtime.InteropServices;
 // to COM components.  If you need to access a type in this assembly from 
 // COM, set the ComVisible attribute to true on that type.
 [assembly: ComVisible(false)]
+
+// The following GUID is for the ID of the typelib if this project is exposed to COM
+[assembly: Guid("8a64c57d-e2d8-4d15-8c65-ab2d0016c2c8")]
 
 // Version information for an assembly consists of the following four values:
 //

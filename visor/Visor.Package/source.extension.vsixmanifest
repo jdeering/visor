@@ -10,7 +10,5 @@
   </Installation>
   <Dependencies>
     <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="4.5" />
-    <Dependency d:Source="Project" d:ProjectName="%CurrentProject%.LanguageService" d:InstallSource="Embed" d:VsixSubPath="LanguageService" Location="|Visor.LanguageService;VSIXContainerProjectOutputGroup|" DisplayName="|Visor.LanguageService;VSIXNameProjectOutputGroup|" Id="|Visor.LanguageService;VSIXIdentifierProjectOutputGroup|" />
-    <Dependency d:Source="Project" d:ProjectName="%CurrentProject%.Project" d:InstallSource="Embed" d:VsixSubPath="Project" Location="|Visor.Project;VSIXContainerProjectOutputGroup|" DisplayName="|Visor.Project;VSIXNameProjectOutputGroup|" Id="|Visor.Project;VSIXIdentifierProjectOutputGroup|" />
   </Dependencies>
 </PackageManifest>

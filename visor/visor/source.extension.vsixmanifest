@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
+  <Metadata>
+    <Identity Id="visor..f4fa20ca-0475-4d4a-a5ce-e643fdbbd2e4" Version="0.1.0" Language="en-US" Publisher="Jason Deering" />
+    <DisplayName>visor</DisplayName>
+    <Description>Empty VSIX Project.</Description>
+  </Metadata>
+  <Installation>
+    <InstallationTarget Id="Microsoft.VisualStudio.Pro" Version="11.0" />
+  </Installation>
+  <Dependencies>
+    <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="4.5" />
+    <Dependency d:Source="Project" d:ProjectName="%CurrentProject%.LanguageService" d:InstallSource="Embed" d:VsixSubPath="LanguageService" Location="|Visor.LanguageService;VSIXContainerProjectOutputGroup|" DisplayName="|Visor.LanguageService;VSIXNameProjectOutputGroup|" Id="|Visor.LanguageService;VSIXIdentifierProjectOutputGroup|" />
+    <Dependency d:Source="Project" d:ProjectName="%CurrentProject%.Project" d:InstallSource="Embed" d:VsixSubPath="Project" Location="|Visor.Project;VSIXContainerProjectOutputGroup|" DisplayName="|Visor.Project;VSIXNameProjectOutputGroup|" Id="|Visor.Project;VSIXIdentifierProjectOutputGroup|" />
+  </Dependencies>
+</PackageManifest>

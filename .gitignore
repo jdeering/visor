@@ -1,0 +1,6 @@
+# git ignore file
+
+*.user
+*.suo
+*.DotSettings
+obj

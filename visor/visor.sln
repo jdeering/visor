@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Visor", "visor\Visor.csproj", "{7A8C5AA9-AF95-4C87-9447-8CA33D3CDB78}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Visor.LanguageService", "Visor.LanguageService\Visor.LanguageService.csproj", "{F00178DC-4EFD-4D86-AC53-BCFAE84DCED8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Visor.Project", "Visor.Project\Visor.Project.csproj", "{10216C01-4A82-4761-812A-DC53973C07EC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7A8C5AA9-AF95-4C87-9447-8CA33D3CDB78}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A8C5AA9-AF95-4C87-9447-8CA33D3CDB78}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7A8C5AA9-AF95-4C87-9447-8CA33D3CDB78}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7A8C5AA9-AF95-4C87-9447-8CA33D3CDB78}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F00178DC-4EFD-4D86-AC53-BCFAE84DCED8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F00178DC-4EFD-4D86-AC53-BCFAE84DCED8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F00178DC-4EFD-4D86-AC53-BCFAE84DCED8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F00178DC-4EFD-4D86-AC53-BCFAE84DCED8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{10216C01-4A82-4761-812A-DC53973C07EC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{10216C01-4A82-4761-812A-DC53973C07EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{10216C01-4A82-4761-812A-DC53973C07EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{10216C01-4A82-4761-812A-DC53973C07EC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

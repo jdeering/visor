@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Visor", "visor\Visor.csproj", "{7A8C5AA9-AF95-4C87-9447-8CA33D3CDB78}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Visor", "Visor.Package\Visor.Package.csproj", "{7A8C5AA9-AF95-4C87-9447-8CA33D3CDB78}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Visor.LanguageService", "Visor.LanguageService\Visor.LanguageService.csproj", "{F00178DC-4EFD-4D86-AC53-BCFAE84DCED8}"
 EndProject

@@ -181,10 +181,10 @@
     <None Include="Key.snk" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\vars.txt" />
-    <None Include="Resources\db.txt" />
-    <None Include="Resources\functions.txt" />
-    <None Include="Resources\keywords.txt" />
+    <EmbeddedResource Include="Resources\vars.txt" />
+    <EmbeddedResource Include="Resources\db.txt" />
+    <EmbeddedResource Include="Resources\functions.txt" />
+    <EmbeddedResource Include="Resources\keywords.txt" />
     <Content Include="Resources\Package.ico" />
   </ItemGroup>
   <PropertyGroup>

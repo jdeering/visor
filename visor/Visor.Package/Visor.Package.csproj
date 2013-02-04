@@ -43,8 +43,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="GlobalSuppression.cs" />
     <Compile Include="Guids.cs" />
-    <Compile Include="Package.cs" />
+    <Compile Include="VisorPackage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

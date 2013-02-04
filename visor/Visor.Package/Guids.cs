@@ -6,8 +6,8 @@ namespace Visor
 {
     static class GuidList
     {
-        public const string VisorPackageString = "f4fa20ca-0475-4d4a-a5ce-e643fdbbd2e4";
-
+        public const string VisorPackageString = "45F0973E-50AB-49DD-B3AA-7E5245ECC705";
+        
         public static readonly Guid VisorPackage = new Guid(VisorPackageString);
     };
 }

@@ -8,20 +8,9 @@ namespace Visor
 {
     [PackageRegistration(UseManagedResourcesOnly = true)]
     [InstalledProductRegistration("#110", "#112", "1.0", IconResourceID = 400)]
+    [ProvideLoadKey("Standard", "0.1.50", "visor", "jdeering", 104)]
     [Guid(GuidList.VisorPackageString)]
-
-    [ProvideService(typeof (IronyLanguageService))]
-    [ProvideLanguageService(typeof (IronyLanguageService),
-        "RepGen",
-        106, // resource ID of localized language name
-        ShowCompletion = true, // Automatically show completion
-        CodeSense = true, // Supports IntelliSense
-        EnableCommenting = true, // Supports commenting out code
-        EnableAsyncCompletion = true, // Supports background parsing
-        RequestStockColors = true
-    )]
-    [ProvideLanguageExtension(typeof(IronyLanguageService), ".rg")]
-    public sealed class Package : IronyPackage
+    public sealed class VisorPackage : IronyPackage
     {
         /// <summary>
         ///     Default constructor of the package.
@@ -30,7 +19,7 @@ namespace Visor
         ///     not sited yet inside Visual Studio environment. The place to do all the other
         ///     initialization is the Initialize method.
         /// </summary>
-        public Package()
+        public VisorPackage()
         {
         }
 

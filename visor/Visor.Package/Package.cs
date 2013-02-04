@@ -1,21 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.Design;
-using System.Diagnostics;
+﻿﻿using System.Diagnostics;
 using System.Globalization;
-using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices;
-using Microsoft.Internal.VisualStudio.PlatformUI;
-using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Shell.Interop;
 using Visor.LanguageService;
 
 namespace Visor
 {
     [PackageRegistration(UseManagedResourcesOnly = true)]
     [InstalledProductRegistration("#110", "#112", "1.0", IconResourceID = 400)]
+    [Guid(GuidList.VisorPackageString)]
+
     [ProvideService(typeof (IronyLanguageService))]
     [ProvideLanguageService(typeof (IronyLanguageService),
         "RepGen",
@@ -25,10 +19,8 @@ namespace Visor
         EnableCommenting = true, // Supports commenting out code
         EnableAsyncCompletion = true, // Supports background parsing
         RequestStockColors = true
-        )]
+    )]
     [ProvideLanguageExtension(typeof(IronyLanguageService), ".rg")]
-    [Guid(GuidList.LanguagePkgString)]
-    [ProvideAutoLoad(VSConstants.UICONTEXT.NoSolution_string)]
     public sealed class Package : IronyPackage
     {
         /// <summary>
@@ -40,7 +32,6 @@ namespace Visor
         /// </summary>
         public Package()
         {
-            Debug.WriteLine(string.Format(CultureInfo.CurrentCulture, "Entering constructor for: {0}", ToString()));
         }
 
         #region Package Members
@@ -51,7 +42,6 @@ namespace Visor
         /// </summary>
         protected override void Initialize()
         {
-            Debug.WriteLine(string.Format(CultureInfo.CurrentCulture, "Entering Initialize() of: {0}", ToString()));
             base.Initialize();
         }
 

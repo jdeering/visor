@@ -1,8 +1,19 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.Design;
+using System.Diagnostics;
 using System.Globalization;
+using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
+using EnvDTE;
+using Microsoft.Internal.VisualStudio.PlatformUI;
+using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Shell.Interop;
 using Visor.LanguageService;
+using Visor.Toolbar;
+using Visor.Options;
 
 namespace Visor
 {
@@ -24,6 +35,10 @@ namespace Visor
     [InstalledProductRegistration("#110", "#112", "1.0", IconResourceID = 400)]
 
     [Guid(GuidList.VisorPackageString)]
+
+    // -------------------------------------------------------------------------------
+    // Language Service
+    // -------------------------------------------------------------------------------
     [ProvideService(typeof(IronyLanguageService))]
     [ProvideLanguageService(typeof(IronyLanguageService),
         "RepGen",
@@ -35,8 +50,18 @@ namespace Visor
         RequestStockColors = true
     )]
     [ProvideLanguageExtension(typeof(IronyLanguageService), ".rg")]
+
+    // -------------------------------------------------------------------------------
+    // Toolbar resource
+    // -------------------------------------------------------------------------------
+    [ProvideMenuResource("Menus.ctmenu", 1)]
     public sealed class VisorPackage : IronyPackage
     {
+        private string _comboSelection;
+        private SymDirectory _currentDirectory;
+        private List<SymDirectory> _directories;
+
+
         /// <summary>
         /// Default constructor of the package.
         /// Inside this method you can place any initialization code that does not require 
@@ -49,12 +74,7 @@ namespace Visor
             Debug.WriteLine(string.Format(CultureInfo.CurrentCulture, "Entering constructor for: {0}", this.ToString()));
         }
 
-
-
-        /////////////////////////////////////////////////////////////////////////////
-        // Overridden Package Implementation
-        #region Package Members
-
+        
         /// <summary>
         /// Initialization of the package; this method is called right after the package is sited, so this is the place
         /// where you can put all the initialization code that rely on services provided by VisualStudio.
@@ -63,8 +83,111 @@ namespace Visor
         {
             Debug.WriteLine (string.Format(CultureInfo.CurrentCulture, "Entering Initialize() of: {0}", this.ToString()));
             base.Initialize();
-        }
-        #endregion
 
+            RegisterMenuCommands();
+        }
+
+
+        private void RegisterMenuCommands()
+        {
+            // Add our command handlers for menu (commands must exist in the .vsct file)
+            var menuCommandService = GetService(typeof(IMenuCommandService)) as OleMenuCommandService;
+            if (menuCommandService == null) return;
+
+            RegisterCommand(PkgCmdIDList.Upload, null);
+            RegisterCommand(PkgCmdIDList.Download, null);
+            RegisterCommand(PkgCmdIDList.InstallSpecfile, null);
+            RegisterCommand(PkgCmdIDList.RunReport, null);
+
+
+            RegisterCommand(PkgCmdIDList.SymDirectorySelect, SetSymDirectory);
+            RegisterCommand(PkgCmdIDList.SymDirectorySelectOptions, LoadSymDirectoryCombo);
+        }
+
+        private OleMenuCommand RegisterCommand(uint commandId, EventHandler commandHandler)
+        {
+            var menuCommandID = new CommandID(GuidList.VisorCmdSet, (int)commandId);
+            var menuItem = new OleMenuCommand(commandHandler, menuCommandID);
+
+            var menuCommandService = GetService(typeof(IMenuCommandService)) as OleMenuCommandService;
+            menuCommandService.AddCommand(menuItem);
+
+            return menuItem;
+        }
+
+        private void LoadSymDirectoryCombo(object sender, EventArgs e)
+        {
+            var eventArgs = e as OleMenuCmdEventArgs;
+
+            if (eventArgs != null)
+            {
+                IntPtr output = eventArgs.OutValue;
+                object input = eventArgs.InValue;
+                if (output != IntPtr.Zero)
+                {
+                    LoadOptions();
+                    var directories = new List<string>();
+                    directories.AddRange(_directories.Select(x => String.Format("Sym {0} ({1})", x.Institution, x.Server.Host)));
+
+                    Marshal.GetNativeVariantForObject(directories.ToArray(), output);
+                }
+            }
+        }
+
+        private void SetSymDirectory(object sender, EventArgs e)
+        {
+            var eventArgs = e as OleMenuCmdEventArgs;
+            if (eventArgs != null)
+            {
+                IntPtr output = eventArgs.OutValue;
+                object input = eventArgs.InValue;
+                if (input != null)
+                {
+                    LoadOptions();
+                    _comboSelection = (string)input;
+
+                    var openParen = _comboSelection.IndexOf('(');
+                    var closeParen = _comboSelection.IndexOf(')');
+                    var length = closeParen - openParen - 1;
+
+                    var host = _comboSelection.Substring(openParen + 1, length);
+                    var institution = int.Parse(_comboSelection.Split(' ')[1]);
+
+                    _currentDirectory = _directories.Single(x => x.Institution == institution && x.Server.Host == host);
+                }
+                else if (output != IntPtr.Zero)
+                {
+                    Marshal.GetNativeVariantForObject(_comboSelection, output);
+                }
+            }
+
+            if (_directories == null || _currentDirectory != null) return;
+
+            if (_directories.Count > 0)
+            {
+                _currentDirectory = _directories.First();
+                _comboSelection = String.Format("Sym {0} ({1})", _currentDirectory.Institution, _currentDirectory.Server.Host);
+            }
+        }
+
+        private void LoadOptions()
+        {
+            //var options = new VisorOptions();
+            //options.LoadSettingsFromStorage();
+            //_servers.AddRange(options.Servers);
+            
+            var serverInfo = new SymServerInfo();
+            serverInfo.Host = "symitar";
+            serverInfo.TelnetPort = 23;
+            serverInfo.FtpPort = 21;
+            serverInfo.AixUsername = "jdeering";
+            serverInfo.AixPassword = "h3dd0#mon";
+
+            _directories = new List<SymDirectory>()
+            {
+                new SymDirectory(serverInfo, 20, "083t0talw@r"),
+                new SymDirectory(serverInfo, 670, "083ch#ckb00k")
+            };
+        }
     }
 }

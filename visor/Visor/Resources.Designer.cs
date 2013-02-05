@@ -76,7 +76,7 @@ namespace Visor {
         ///	WARNINGCODE:4|Warning 4 Code|10|5|999
         ///	WARNINGCODE:5|Warning 5 Code|10|5|999
         ///	WARNINGCODE:6|Warning 6 Code|10|5|999
-        ///	WARNINGCODE:7|Warning [rest of string was truncated]&quot;;.
+        ///	WARNIN [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string db {
             get {
@@ -111,6 +111,16 @@ namespace Visor {
         internal static string keywords {
             get {
                 return ResourceManager.GetString("keywords", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Toolbar {
+            get {
+                object obj = ResourceManager.GetObject("Toolbar", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
         

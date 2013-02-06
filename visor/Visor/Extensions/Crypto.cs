@@ -6,6 +6,9 @@ namespace Visor.Extensions
 {
     public static class Crypto
     {
+        private static string KeyFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Visor", "Key.pkf");
+        private static string IVFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Visor", "IV.pkf");
+
         public static byte[] Encrypt(string s)
         {
             using (RijndaelManaged rj = new RijndaelManaged())
@@ -34,11 +37,7 @@ namespace Visor.Extensions
 
         public static string Decrypt(byte[] data)
         {
-            var appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-            var keyFilePath = string.Join("\\", appDataFolder, "Visor", "Key.pkf");
-            var ivFilePath = string.Join("\\", appDataFolder, "Visor", "IV.private");
-
-            if (!File.Exists(keyFilePath) || !File.Exists(ivFilePath))
+            if (!File.Exists(KeyFilePath) || !File.Exists(IVFilePath))
             {
                 throw new FileNotFoundException("Missing private key file");
             }
@@ -50,14 +49,15 @@ namespace Visor.Extensions
                 rj.IV = GetPrivateIV();
 
                 var decryptor = rj.CreateDecryptor(rj.Key, rj.IV);
-                string decrypted = "";
-                using (MemoryStream ms = new MemoryStream())
+                string decrypted;
+                using (MemoryStream ms = new MemoryStream(data))
                 {
-                    using (CryptoStream cs = new CryptoStream(ms, decryptor, CryptoStreamMode.Write))
+                    using (CryptoStream cs = new CryptoStream(ms, decryptor, CryptoStreamMode.Read))
                     {
                         using (StreamReader sr = new StreamReader(cs))
                         {
                             decrypted = sr.ReadToEnd();
+                            sr.Close();
                         }
                     }
                 }
@@ -67,38 +67,38 @@ namespace Visor.Extensions
 
         private static byte[] GetPrivateKey()
         {
-            var appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-            var keyFilePath = string.Join("\\", appDataFolder, "Visor", "Key.pkf");
-
-            if (!File.Exists(keyFilePath))
+            if (!File.Exists(KeyFilePath))
             {
                 using (RijndaelManaged rj = new RijndaelManaged())
                 {
                     rj.KeySize = 128;
                     rj.GenerateKey();
-                    File.WriteAllBytes(keyFilePath, rj.Key);
+
+                    var fileData = Convert.ToBase64String(rj.Key);
+
+                    File.WriteAllText(KeyFilePath, fileData);
                 }
             }
 
-            return File.ReadAllBytes(keyFilePath);
+            return Convert.FromBase64String(File.ReadAllText(KeyFilePath));
         }
 
         private static byte[] GetPrivateIV()
         {
-            var appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-            var ivFilePath = string.Join("\\", appDataFolder, "Visor", "IV.private");
-            
-            if (!File.Exists(ivFilePath))
+            if (!File.Exists(IVFilePath))
             {
                 using (RijndaelManaged rj = new RijndaelManaged())
                 {
                     rj.KeySize = 128;
                     rj.GenerateIV();
-                    File.WriteAllBytes(ivFilePath, rj.IV);
+
+                    var fileData = Convert.ToBase64String(rj.IV);
+
+                    File.WriteAllText(IVFilePath, fileData);
                 }
             }
 
-            return File.ReadAllBytes(ivFilePath);
+            return Convert.FromBase64String(File.ReadAllText(IVFilePath));
         }
     }
 }

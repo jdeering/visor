@@ -56,6 +56,7 @@ namespace Visor
     // Toolbar resource
     // -------------------------------------------------------------------------------
     [ProvideMenuResource("Menus.ctmenu", 1)]
+    [ProvideOptionPage(typeof(VisorOptions), "Visor", "General", 0, 0, true)]
     public sealed class VisorPackage : IronyPackage
     {
         private string _comboSelection;
@@ -127,7 +128,7 @@ namespace Visor
                 {
                     LoadOptions();
                     var directories = new List<string>();
-                    directories.AddRange(_directories.Select(x => String.Format("Sym {0} ({1})", x.Institution, x.Server.Host)));
+                    directories.AddRange(_directories.Select(x => x.ToString()));
 
                     Marshal.GetNativeVariantForObject(directories.ToArray(), output);
                 }
@@ -181,22 +182,12 @@ namespace Visor
 
         private void LoadOptions()
         {
-            //var options = new VisorOptions();
-            //options.LoadSettingsFromStorage();
-            //_servers.AddRange(options.Servers);
-            
-            var serverInfo = new SymServerInfo();
-            serverInfo.Host = "symitar";
-            serverInfo.TelnetPort = 23;
-            serverInfo.FtpPort = 21;
-            serverInfo.AixUsername = "jdeering";
-            serverInfo.AixPassword = "h3dd0#mon";
+            _directories = new List<SymDirectory>();
+            var options = new VisorOptions();
 
-            _directories = new List<SymDirectory>()
-            {
-                new SymDirectory(serverInfo, 20, "083t0talw@r"),
-                new SymDirectory(serverInfo, 670, "083ch#ckb00k")
-            };
+            options.LoadSettingsFromStorage();
+
+            _directories.AddRange(options.Directories);
         }
 
         private void UploadCurrentFile(object sender, EventArgs e)

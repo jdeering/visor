@@ -43,6 +43,11 @@ namespace Visor.Options
             ExtensionsToKeep = new string[] { ".html" };
         }
 
+        public override string ToString()
+        {
+            return String.Format("Sym {0} ({1})", Institution, Server.Host);
+        }
+
         public void Connect()
         {
             _session = new SymSession(Institution);

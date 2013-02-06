@@ -7,12 +7,12 @@ using Visor.Net;
 
 namespace Visor.Options
 {
-    public struct SymServerInfo
+    public class SymServerInfo
     {
-        public string Host;
-        public int TelnetPort;
-        public int FtpPort;
-        public string AixUsername;
-        public string AixPassword;
+        public string Host { get; set; }
+        public int TelnetPort { get; set; }
+        public int FtpPort { get; set; }
+        public string AixUsername { get; set; }
+        public string AixPassword { get; set; }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Diagnostics;
 using System.Globalization;
@@ -94,11 +95,10 @@ namespace Visor
             var menuCommandService = GetService(typeof(IMenuCommandService)) as OleMenuCommandService;
             if (menuCommandService == null) return;
 
-            RegisterCommand(PkgCmdIDList.Upload, null);
-            RegisterCommand(PkgCmdIDList.Download, null);
-            RegisterCommand(PkgCmdIDList.InstallSpecfile, null);
-            RegisterCommand(PkgCmdIDList.RunReport, null);
-
+            RegisterCommand(PkgCmdIDList.Upload, UploadCurrentFile);
+            RegisterCommand(PkgCmdIDList.Download, DownloadCurrentFile);
+            RegisterCommand(PkgCmdIDList.InstallSpecfile, InstallCurrentFile);
+            RegisterCommand(PkgCmdIDList.RunReport, RunCurrentFile);
 
             RegisterCommand(PkgCmdIDList.SymDirectorySelect, SetSymDirectory);
             RegisterCommand(PkgCmdIDList.SymDirectorySelectOptions, LoadSymDirectoryCombo);
@@ -153,7 +153,10 @@ namespace Visor
                     var host = _comboSelection.Substring(openParen + 1, length);
                     var institution = int.Parse(_comboSelection.Split(' ')[1]);
 
+                    if (_currentDirectory != null) _currentDirectory.Disconnect();
+
                     _currentDirectory = _directories.Single(x => x.Institution == institution && x.Server.Host == host);
+                    StartSessionAsync();
                 }
                 else if (output != IntPtr.Zero)
                 {
@@ -166,8 +169,14 @@ namespace Visor
             if (_directories.Count > 0)
             {
                 _currentDirectory = _directories.First();
+                StartSessionAsync();
                 _comboSelection = String.Format("Sym {0} ({1})", _currentDirectory.Institution, _currentDirectory.Server.Host);
             }
+        }
+
+        private void StartSessionAsync()
+        {
+            System.Threading.ThreadPool.QueueUserWorkItem(delegate { _currentDirectory.Connect(); }, null);
         }
 
         private void LoadOptions()
@@ -188,6 +197,132 @@ namespace Visor
                 new SymDirectory(serverInfo, 20, "083t0talw@r"),
                 new SymDirectory(serverInfo, 670, "083ch#ckb00k")
             };
+        }
+
+        private void UploadCurrentFile(object sender, EventArgs e)
+        {
+            string currentFile = GetCurrentFilePath();
+
+            int result = DialogResult.Yes;
+            //if (_currentDirectory.FileExists(currentFile))
+            //    result = Confirmation("File Exists on Server", " Upload?");
+
+            if (result == DialogResult.Yes)
+            {
+                _currentDirectory.UploadFile(currentFile, FtpUploadSuccess, FtpError);
+            }
+        }
+
+        private void FtpUploadSuccess(string fileName)
+        {
+            MessageBox("File Uploaded",
+                       String.Format("{0} successfully uploaded to {1}",
+                                    Path.GetFileNameWithoutExtension(fileName),
+                                    String.Format("Sym {0} ({1})", _currentDirectory.Institution, _currentDirectory.Server.Host)));
+        }
+
+        private void FtpDownloadSuccess(string fileName)
+        {
+        }
+
+        private void FtpError(Exception exception)
+        {
+            MessageBox("An exception has occured!", exception.Message);
+        }
+
+        private void DownloadCurrentFile(object sender, EventArgs e)
+        {
+            _currentDirectory.DownloadFile(GetCurrentFilePath(), FtpDownloadSuccess, FtpError);
+        }
+
+        private void InstallCurrentFile(object sender, EventArgs e)
+        {
+            /*
+            try
+            {
+                var specfileName = Path.GetFileNameWithoutExtension(GetCurrentFilePath());
+                UploadCurrentFile(sender, e);
+                _directory.Install(specfileName, _currentDirectory);
+            }
+            catch (Exception exception)
+            {
+                MessageBox("Error Installing Specfile", exception.Message);
+            }
+            */
+        }
+
+        private void RunCurrentFile(object sender, EventArgs e)
+        {
+            /*
+            try
+            {
+                var specfileName = Path.GetFileNameWithoutExtension(GetCurrentFilePath());
+                UploadCurrentFile(sender, e);
+                _server.Run(specfileName, _currentDirectory);
+            }
+            catch (Exception exception)
+            {
+                MessageBox("Error Running Report", exception.Message);
+            }
+            */
+        }
+
+        private int MessageBox(string title, string message)
+        {
+            // Show a Message Box to prove we were here
+            var uiShell = (IVsUIShell)GetService(typeof(SVsUIShell));
+            Guid clsid = Guid.Empty;
+            int result;
+            ErrorHandler.ThrowOnFailure(uiShell.ShowMessageBox(
+                0,
+                ref clsid,
+                title,
+                message,
+                string.Empty,
+                0,
+                OLEMSGBUTTON.OLEMSGBUTTON_OK,
+                OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST,
+                OLEMSGICON.OLEMSGICON_INFO,
+                0, // false
+                out result));
+
+            return result;
+        }
+
+        private int Confirmation(string title, string message)
+        {
+            // Show a Message Box to prove we were here
+            var uiShell = (IVsUIShell)GetService(typeof(SVsUIShell));
+            Guid clsid = Guid.Empty;
+            int result;
+            ErrorHandler.ThrowOnFailure(
+                uiShell.ShowMessageBox(
+                    0,
+                    ref clsid,
+                    title,
+                    message,
+                    string.Empty,
+                    0,
+                    OLEMSGBUTTON.OLEMSGBUTTON_YESNOCANCEL,
+                    OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST,
+                    OLEMSGICON.OLEMSGICON_INFO,
+                    0, // false
+                    out result));
+
+            return result;
+        }
+
+        private string GetCurrentFilePath()
+        {
+            try
+            {
+                var dte = GetGlobalService(typeof(DTE)) as DTE;
+                return dte.ActiveDocument.FullName;
+            }
+            catch (Exception e)
+            {
+                throw new Exception("There is no active document.", e);
+            }
         }
     }
 }

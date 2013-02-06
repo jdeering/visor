@@ -68,9 +68,9 @@
     </Reference>
     <Reference Include="Microsoft.VisualStudio.TextManager.Interop.8.0, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
     <Reference Include="Microsoft.VisualStudio.TextManager.Interop.9.0, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-    <Reference Include="Symitar, Version=1.0.4784.23614, Culture=neutral, PublicKeyToken=d1499deb6e5cfe47, processorArchitecture=MSIL">
+    <Reference Include="Symitar, Version=1.0.4784.29241, Culture=neutral, PublicKeyToken=d1499deb6e5cfe47, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\SymSharp.1.0.4784.23614\lib\net40\Symitar.dll</HintPath>
+      <HintPath>..\packages\SymSharp.1.0.4784.29241\lib\net40\Symitar.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

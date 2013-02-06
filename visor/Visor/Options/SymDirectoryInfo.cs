@@ -17,6 +17,8 @@ namespace Visor.Options
 
         private SymSession _session;
 
+        private string[] ExtensionsToKeep;
+
         public SymDirectory()
         {
             Initialize(new SymServerInfo(), 999, "");
@@ -34,11 +36,35 @@ namespace Visor.Options
 
         private void Initialize(SymServerInfo server, int directory, string userId)
         {
+            Server = server;
             Institution = directory;
             UserId = userId;
 
+            ExtensionsToKeep = new string[] { ".html" };
+        }
+
+        public void Connect()
+        {
             _session = new SymSession(Institution);
             _session.Connect(Server.Host, Server.TelnetPort);
+            _session.Login(Server.AixUsername, Server.AixPassword, UserId);
+        }
+
+        public void Disconnect()
+        {
+            if (_session != null)
+            {
+                _session.Disconnect();
+                _session = null;
+            }
+        }
+
+        public bool FileExists(string path)
+        {
+            FileType type = GetSymitarFileType(path);
+            string fileName = GetSymitarFileName(path);
+
+            return _session.FileExists(fileName, type);
         }
 
         public void UploadFile(string path, Action<string> SuccessCallback, Action<FtpException> ErrorCallback)
@@ -81,6 +107,16 @@ namespace Visor.Options
                 case ".hlp": return FileType.Help;
                 default: return FileType.Letter;
             }
+        }
+
+        private string GetSymitarFileName(string path)
+        {
+            var extension = Path.GetExtension(path);
+
+            if (ExtensionsToKeep.Contains(extension))
+                return Path.GetFileName(path);
+            else
+                return Path.GetFileNameWithoutExtension(path);
         }
     }
 }

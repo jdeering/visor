@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
     <id>SymSharp</id>
-    <version>1.0.4784.23614</version>
+    <version>1.0.4784.29241</version>
     <authors>jdeering</authors>
     <owners>jdeering</owners>
     <licenseUrl>http://www.gnu.org/licenses/gpl-3.0.txt</licenseUrl>

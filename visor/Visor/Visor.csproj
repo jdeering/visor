@@ -137,6 +137,7 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Extensions\Crypto.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Guids.cs" />
     <Compile Include="LanguageService\AuthoringScope.cs" />

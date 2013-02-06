@@ -7,9 +7,16 @@ using Microsoft.VisualStudio.Shell;
 
 namespace Visor.LanguageService
 {
-    public class IronyPackage : Package, IOleComponent
+    public class IronyPackage : Microsoft.VisualStudio.Project.ProjectPackage, IOleComponent
     {
         uint _componentId;
+
+        #region ProjectPackage components
+        public override string ProductUserContext
+        {
+            get { return null; }
+        }
+        #endregion
 
         protected override void Initialize()
         {

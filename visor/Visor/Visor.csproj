@@ -209,6 +209,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <ZipItem Include="Project\Templates\Files\Batch\Program.rg" />
+    <ZipItem Include="Project\Templates\Files\Demand\Program.rg" />
+    <ZipItem Include="Project\Templates\Files\Help\Helpfile.hlp" />
+    <ZipItem Include="Project\Templates\Files\Letter\Letterfile.ltr" />
+    <ZipProject Include="Project\Templates\Projects\BasicProject\Basic.symproj" />
     <None Include="source.extension.vsixmanifest">
       <SubType>Designer</SubType>
     </None>
@@ -226,6 +231,8 @@
     <EmbeddedResource Include="Resources\db.txt" />
     <EmbeddedResource Include="Resources\functions.txt" />
     <EmbeddedResource Include="Resources\keywords.txt" />
+    <ZipProject Include="Project\Templates\Projects\BasicProject\Basic.ico" />
+    <ZipItem Include="Project\Templates\Files\HTML\HTMLPage1.html" />
     <Content Include="Resources\Package.ico" />
   </ItemGroup>
   <ItemGroup />

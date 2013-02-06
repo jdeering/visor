@@ -55,7 +55,7 @@ namespace Visor.Net.Ftp
                 else
                     client.TransferMode = AlexPilotti.FTPS.Common.ETransferMode.ASCII;
 
-                client.Download(source, destination);
+                client.Upload(source, destination);
 
                 SuccessCallback(Path.GetFileNameWithoutExtension(source));
             }

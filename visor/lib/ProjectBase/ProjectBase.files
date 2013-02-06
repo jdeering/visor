@@ -5,12 +5,14 @@
     <AllowedAssemblyPrefix>$(AllowedAssemblyPrefix);Microsoft.Internal</AllowedAssemblyPrefix>
   </PropertyGroup>
   <ItemGroup>
+	<!--
     <Reference Include="EnvDTE80">
       <HintPath>EnvDTE80.dll</HintPath>
       <Name>EnvDTE80</Name>
       <SpecificVersion>False</SpecificVersion>
       <Aliases>global</Aliases>
     </Reference>
+	-->
     <Reference Include="Microsoft.Build">
       <Aliases>global</Aliases>
     </Reference>

@@ -10,10 +10,12 @@ namespace Visor
         public const string VisorCmdSetString = "5990bbe9-3b8a-449a-8135-2f2a0de3b712";
         public const string VisorToolbarImagesString = "b3f4913f-bcb5-4c42-bc37-71df6ab370f5";
         public const string VisorOptionsPageString = "e8f10dd4-f947-46a1-a653-29304c9fe554";
+        public const string VisorProjectFactoryString = "46abf810-899a-485a-bb1a-f079d80a5395";
 
         public static readonly Guid VisorPackage = new Guid(VisorPackageString);
         public static readonly Guid VisorCmdSet = new Guid(VisorCmdSetString);
         public static readonly Guid VisorToolbarImages = new Guid(VisorToolbarImagesString);
         public static readonly Guid VisorOptions = new Guid(VisorOptionsPageString);
+        public static readonly Guid VisorProjectFactory = new Guid(VisorProjectFactoryString);
     };
 }

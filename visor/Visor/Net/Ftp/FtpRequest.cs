@@ -57,13 +57,13 @@ namespace Visor.Net.Ftp
 
                 client.Upload(source, destination);
                 client.SendCommand(String.Format("SITE CHMOD 755 {0}", destination));
-                SuccessCallback(Path.GetFileNameWithoutExtension(source));
             }
             catch (Exception e)
             {
                 if (ErrorCallback != null)
                     ErrorCallback(new FtpException("An unknown FTP error has occurred", e));
             }
+            SuccessCallback(Path.GetFileNameWithoutExtension(source));
         }
 
         /*

@@ -2,14 +2,14 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
     <id>SymSharp</id>
-    <version>1.0.4784.29241</version>
+    <version>1.1.4790.16407</version>
     <authors>jdeering</authors>
     <owners>jdeering</owners>
     <licenseUrl>http://www.gnu.org/licenses/gpl-3.0.txt</licenseUrl>
     <projectUrl>https://github.com/jdeering/SymSharp</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Symitar RAS for C#</description>
-    <releaseNotes>Strongly signed</releaseNotes>
+    <releaseNotes>Release 1.1</releaseNotes>
     <copyright>Copyright 2013</copyright>
     <tags>symitar poweron repgen ras symsharp</tags>
     <references>

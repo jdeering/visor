@@ -213,8 +213,8 @@ namespace Visor
             string currentFile = GetCurrentFilePath();
 
             int result = DialogResult.Yes;
-            //if (_currentDirectory.FileExists(currentFile))
-            //    result = Confirmation("File Exists on Server", " Upload?");
+            if (_currentDirectory.FileExists(currentFile))
+                result = Confirmation("File Exists on Server", " Upload?");
 
             if (result == DialogResult.Yes)
             {
@@ -232,6 +232,7 @@ namespace Visor
 
         private void FtpDownloadSuccess(string fileName)
         {
+            // Not showing a message on success
         }
 
         private void FtpError(Exception exception)

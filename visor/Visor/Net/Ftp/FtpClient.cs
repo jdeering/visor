@@ -62,6 +62,16 @@ namespace Visor.Net.Ftp
             return bytesPut > 0;
         }
 
+        public void SendCommand(string command)
+        {
+            var credential = new NetworkCredential(_login.Username, _login.Password);
+            using (var client = new FTPSClient())
+            {
+                client.Connect(_connection.Server, _connection.Port, credential, ESSLSupportMode.ClearText, null, null, 0, 0, 0, null);
+                client.SendCustomCommand(command);
+            }
+        }
+
         public bool FileExists(string path)
         {
             var credential = new NetworkCredential(_login.Username, _login.Password);

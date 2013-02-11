@@ -56,7 +56,7 @@ namespace Visor.Net.Ftp
                     client.TransferMode = AlexPilotti.FTPS.Common.ETransferMode.ASCII;
 
                 client.Upload(source, destination);
-
+                client.SendCommand(String.Format("CHMOD 755 {0}", destination));
                 SuccessCallback(Path.GetFileNameWithoutExtension(source));
             }
             catch (Exception e)

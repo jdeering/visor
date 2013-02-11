@@ -96,17 +96,17 @@ namespace Visor.Options
         {
             if (directoryList.SelectedItems.Count == 1)
             {
-                var directory = (SymDirectory)directoryList.SelectedItem;
+                var symDirectory = (SymDirectory)directoryList.SelectedItem;
 
-                this.host.Text = directory.Server.Host;
-                this.telnet.Text = directory.Server.TelnetPort.ToString();
-                this.ftp.Text = directory.Server.FtpPort.ToString();
+                this.host.Text = symDirectory.Server.Host;
+                this.telnet.Text = symDirectory.Server.TelnetPort.ToString();
+                this.ftp.Text = symDirectory.Server.FtpPort.ToString();
 
-                this.username.Text = directory.Server.AixUsername;
-                this.password.Text = directory.Server.AixPassword;
+                this.username.Text = symDirectory.Server.AixUsername;
+                this.password.Text = symDirectory.Server.AixPassword;
 
-                this.directory.Text = directory.Institution.ToString();
-                this.userId.Text = directory.UserId;
+                this.directory.Text = symDirectory.Institution.ToString();
+                this.userId.Text = symDirectory.UserId;
             }
         }
 

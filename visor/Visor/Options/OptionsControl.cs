@@ -82,9 +82,39 @@ namespace Visor.Options
         {
             var selectedDirectories = directoryList.SelectedItems;
 
-            foreach (var d in selectedDirectories)
+            for (int i = 0; i < selectedDirectories.Count; i++)
             {
+                var d = (SymDirectory)selectedDirectories[i];
                 directoryList.Items.Remove(d);
+                Options.Directories.Remove(d);
+            }
+
+            ClearFields();
+        }
+
+        private void LoadDirectoryInfo(object sender, EventArgs e)
+        {
+            if (directoryList.SelectedItems.Count == 1)
+            {
+                var directory = (SymDirectory)directoryList.SelectedItem;
+
+                this.host.Text = directory.Server.Host;
+                this.telnet.Text = directory.Server.TelnetPort.ToString();
+                this.ftp.Text = directory.Server.FtpPort.ToString();
+
+                this.username.Text = directory.Server.AixUsername;
+                this.password.Text = directory.Server.AixPassword;
+
+                this.directory.Text = directory.Institution.ToString();
+                this.userId.Text = directory.UserId;
+            }
+        }
+
+        private void ClearFields()
+        {
+            foreach (TextBox field in this.Controls.OfType<TextBox>())
+            {
+                field.Text = "";
             }
         }
     }

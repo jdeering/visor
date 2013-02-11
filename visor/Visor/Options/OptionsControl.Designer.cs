@@ -55,6 +55,7 @@
             this.directoryList.Name = "directoryList";
             this.directoryList.Size = new System.Drawing.Size(120, 199);
             this.directoryList.TabIndex = 0;
+            this.directoryList.SelectedValueChanged += LoadDirectoryInfo;
             // 
             // label1
             // 
@@ -186,7 +187,7 @@
             this.addButton.Name = "addButton";
             this.addButton.Size = new System.Drawing.Size(75, 23);
             this.addButton.TabIndex = 16;
-            this.addButton.Text = "Add";
+            this.addButton.Text = "Add/Update";
             this.addButton.UseVisualStyleBackColor = true;
             this.addButton.Click += new System.EventHandler(this.addButton_Click);
             // 
@@ -204,24 +205,24 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.label5);
+            this.Controls.Add(this.label6);
+            this.Controls.Add(this.label7);
+            this.Controls.Add(this.directoryList);
+            this.Controls.Add(this.deleteButton);
+            this.Controls.Add(this.host);
+            this.Controls.Add(this.telnet);
+            this.Controls.Add(this.ftp);
+            this.Controls.Add(this.username);
+            this.Controls.Add(this.password);
+            this.Controls.Add(this.directory);
+            this.Controls.Add(this.userId);
             this.Controls.Add(this.clearButton);
             this.Controls.Add(this.addButton);
-            this.Controls.Add(this.deleteButton);
-            this.Controls.Add(this.userId);
-            this.Controls.Add(this.label7);
-            this.Controls.Add(this.directory);
-            this.Controls.Add(this.label6);
-            this.Controls.Add(this.password);
-            this.Controls.Add(this.label5);
-            this.Controls.Add(this.username);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.ftp);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.telnet);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.host);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.directoryList);
             this.Name = "OptionsControl";
             this.Size = new System.Drawing.Size(392, 238);
             this.ResumeLayout(false);

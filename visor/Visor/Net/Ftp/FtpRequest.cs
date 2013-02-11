@@ -97,14 +97,13 @@ namespace Visor.Net.Ftp
                     client.TransferMode = AlexPilotti.FTPS.Common.ETransferMode.ASCII;
 
                 client.Download(source, destination);
-
-                SuccessCallback(Path.GetFileNameWithoutExtension(destination));
             }
             catch (Exception e)
             {
                 if(ErrorCallback != null)
                     ErrorCallback(new FtpException("An unknown FTP error has occurred", e));
             }
+            SuccessCallback(Path.GetFileNameWithoutExtension(destination));
         }
     }
 

@@ -304,6 +304,33 @@ namespace Visor
 
         private void RunCurrentFile(object sender, EventArgs e)
         {
+            var worker = new BackgroundWorker();
+
+            worker.DoWork += (o, args) =>
+            {
+                try
+                {
+                    // Upload the current file and run the install on success
+                    _currentDirectory.UploadFile(GetCurrentFilePath(), RunReport, FtpError);
+                }
+                catch (Exception exception)
+                {
+                    ErrorMessage("Error Installing Specfile!", exception.Message);
+                }
+            };
+
+            worker.RunWorkerAsync();
+        }
+
+        private void RunReport(string fileName)
+        {
+            var runner = new BackgroundWorker();
+            runner.WorkerReportsProgress = true;
+            runner.WorkerSupportsCancellation = false;
+            runner.DoWork += _currentDirectory.Run;
+            runner.RunWorkerCompleted +=
+                (sender, args) => MessageBox("Report Complete", String.Format("{0} has finished running.", fileName));
+            runner.RunWorkerAsync(fileName);
         }
 
         private int MessageBox(string title, string message)

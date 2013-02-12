@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.IO;
 using System.Collections.Generic;
 using System.Linq;
@@ -162,6 +163,26 @@ namespace Visor.Options
                 case ".hlp": return FileType.Help;
                 default: return FileType.Letter;
             }
+        }
+
+        public void Run(object sender, DoWorkEventArgs args)
+        {
+            var worker = sender as BackgroundWorker;
+            var file = new Symitar.File() {Name = (string) args.Argument, Type = FileType.RepGen};
+
+            _session.FileRun(file, 
+                (code, description) =>
+                    {
+                        if(worker != null)
+                            worker.ReportProgress(code * 10);
+                    }, 
+                GetPromptValue, 
+                3);
+        }
+
+        private string GetPromptValue(string prompt)
+        {
+            return "";
         }
     }
 }

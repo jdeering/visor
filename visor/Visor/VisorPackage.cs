@@ -127,11 +127,24 @@ namespace Visor
         {
             var menuCommandID = new CommandID(GuidList.VisorCmdSet, (int)commandId);
             var menuItem = new OleMenuCommand(commandHandler, menuCommandID);
+            
+            if(commandId != PkgCmdIDList.SymDirectorySelect && commandId != PkgCmdIDList.SymDirectorySelectOptions)
+                menuItem.BeforeQueryStatus += CommandVisibility;
 
             var menuCommandService = GetService(typeof(IMenuCommandService)) as OleMenuCommandService;
             menuCommandService.AddCommand(menuItem);
 
             return menuItem;
+        }
+
+        private void CommandVisibility(object sender, EventArgs e)
+        {
+            var item = sender as OleMenuCommand;
+            var dte = GetGlobalService(typeof(DTE)) as DTE;
+
+            if (item == null || dte == null) return;
+
+            item.Enabled = (_currentDirectory != null && dte.ActiveDocument != null);
         }
 
         private void LoadSymDirectoryCombo(object sender, EventArgs e)

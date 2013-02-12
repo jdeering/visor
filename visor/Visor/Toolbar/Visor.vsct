@@ -101,7 +101,6 @@
         </Strings>
       </Button>
 
-      <!--
       <Button guid="VisorCmdSet" id="Run" priority="0x0400" type="Button">
         <Parent guid="VisorCmdSet" id="VisorGroup" />
         <Icon guid="VisorToolbarImages" id="bmpPlay" />
@@ -109,7 +108,6 @@
           <ButtonText>Run Report</ButtonText>
         </Strings>
       </Button>
-      -->
     </Buttons>
    
     <!--The bitmaps section is used to define the bitmaps that are used for the commands.-->

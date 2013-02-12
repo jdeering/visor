@@ -304,18 +304,6 @@ namespace Visor
 
         private void RunCurrentFile(object sender, EventArgs e)
         {
-            /*
-            try
-            {
-                var specfileName = Path.GetFileNameWithoutExtension(GetCurrentFilePath());
-                UploadCurrentFile(sender, e);
-                _server.Run(specfileName, _currentDirectory);
-            }
-            catch (Exception exception)
-            {
-                MessageBox("Error Running Report", exception.Message);
-            }
-            */
         }
 
         private int MessageBox(string title, string message)

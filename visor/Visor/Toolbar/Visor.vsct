@@ -95,7 +95,7 @@
 
       <Button guid="VisorCmdSet" id="Install" priority="0x0300" type="Button">
         <Parent guid="VisorCmdSet" id="VisorGroup" />
-        <Icon guid="VisorToolbarImages" id="bmpDownload" />
+        <Icon guid="VisorToolbarImages" id="bmpCogs" />
         <Strings>
           <ButtonText>Install Specfile</ButtonText>
         </Strings>
@@ -104,7 +104,7 @@
       <!--
       <Button guid="VisorCmdSet" id="Run" priority="0x0400" type="Button">
         <Parent guid="VisorCmdSet" id="VisorGroup" />
-        <Icon guid="VisorToolbarImages" id="bmpDownload" />
+        <Icon guid="VisorToolbarImages" id="bmpPlay" />
         <Strings>
           <ButtonText>Run Report</ButtonText>
         </Strings>
@@ -119,7 +119,7 @@
             bitmap strip containing the bitmaps and then there are the numeric ids of the elements used 
             inside a button definition. An important aspect of this declaration is that the element id 
             must be the actual index (1-based) of the bitmap inside the bitmap strip. -->
-      <Bitmap guid="VisorToolbarImages" href="..\Resources\Toolbar.png" usedList="bmpUpload, bmpDownload, bmpPicSearch, bmpPicX, bmpPicArrows"/>
+      <Bitmap guid="VisorToolbarImages" href="..\Resources\Toolbar.png" usedList="bmpUpload, bmpDownload, bmpPlay, bmpCogs, bmpPicArrows"/>
       
     </Bitmaps>
  
@@ -150,10 +150,9 @@
     <GuidSymbol name="VisorToolbarImages" value="{b3f4913f-bcb5-4c42-bc37-71df6ab370f5}" >
       <IDSymbol name="bmpUpload" value="1" />
       <IDSymbol name="bmpDownload" value="2" />
-      <IDSymbol name="bmpPicSearch" value="3" />
-      <IDSymbol name="bmpPicX" value="4" />
+      <IDSymbol name="bmpPlay" value="3" />
+      <IDSymbol name="bmpCogs" value="4" />
       <IDSymbol name="bmpPicArrows" value="5" />
-      <IDSymbol name="bmpPicStrikethrough" value="6" />
     </GuidSymbol>
   </Symbols>
 

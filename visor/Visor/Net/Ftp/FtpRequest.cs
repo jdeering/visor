@@ -56,12 +56,15 @@ namespace Visor.Net.Ftp
                     client.TransferMode = AlexPilotti.FTPS.Common.ETransferMode.ASCII;
 
                 client.Upload(source, destination);
-                client.SendCommand(String.Format("SITE CHMOD 755 {0}", destination));
+
+                try { client.SendCommand(String.Format("SITE CHMOD 755 {0}", destination)); } 
+                catch { /* eat errors on the CHMOD command, probably already has correct permissions if failing */ }
             }
             catch (Exception e)
             {
                 if (ErrorCallback != null)
-                    ErrorCallback(new FtpException("An unknown FTP error has occurred", e));
+                    ErrorCallback(new FtpException(e.Message));
+                return;
             }
             SuccessCallback(Path.GetFileNameWithoutExtension(source));
         }
@@ -100,8 +103,9 @@ namespace Visor.Net.Ftp
             }
             catch (Exception e)
             {
-                if(ErrorCallback != null)
-                    ErrorCallback(new FtpException("An unknown FTP error has occurred", e));
+                if (ErrorCallback != null)
+                    ErrorCallback(new FtpException(e.Message));
+                return;
             }
             SuccessCallback(Path.GetFileNameWithoutExtension(destination));
         }

@@ -210,16 +210,23 @@ namespace Visor
 
         private void UploadCurrentFile(object sender, EventArgs e)
         {
-            string currentFile = GetCurrentFilePath();
+            var worker = new BackgroundWorker();
 
-            int result = DialogResult.Yes;
-            if (_currentDirectory.FileExists(currentFile))
-                result = Confirmation("File Exists on Server", " Upload?");
-
-            if (result == DialogResult.Yes)
+            worker.DoWork += (o, args) =>
             {
-                _currentDirectory.UploadFile(currentFile, FtpUploadSuccess, FtpError);
-            }
+                string currentFile = GetCurrentFilePath();
+
+                int result = DialogResult.Yes;
+                if (_currentDirectory.FileExists(currentFile))
+                    result = Confirmation("File Exists on Server", " Upload?");
+
+                if (result == DialogResult.Yes)
+                {
+                    _currentDirectory.UploadFile(currentFile, FtpUploadSuccess, FtpError);
+                }
+            };
+
+            worker.RunWorkerAsync();
         }
 
         private void FtpUploadSuccess(string fileName)
@@ -227,7 +234,7 @@ namespace Visor
             MessageBox("File Uploaded",
                        String.Format("{0} successfully uploaded to {1}",
                                     Path.GetFileNameWithoutExtension(fileName),
-                                    String.Format("Sym {0} ({1})", _currentDirectory.Institution, _currentDirectory.Server.Host)));
+                                    _currentDirectory));
         }
 
         private void FtpDownloadSuccess(string fileName)
@@ -237,7 +244,7 @@ namespace Visor
 
         private void FtpError(Exception exception)
         {
-            MessageBox("An exception has occured!", exception.Message);
+            ErrorMessage("File Transfer Failed!", exception.Message);
         }
 
         private void DownloadCurrentFile(object sender, EventArgs e)
@@ -247,18 +254,39 @@ namespace Visor
 
         private void InstallCurrentFile(object sender, EventArgs e)
         {
-            /*
-            try
+            var worker = new BackgroundWorker();
+
+            worker.DoWork += (o, args) =>
             {
-                var specfileName = Path.GetFileNameWithoutExtension(GetCurrentFilePath());
-                UploadCurrentFile(sender, e);
-                _directory.Install(specfileName, _currentDirectory);
-            }
-            catch (Exception exception)
-            {
-                MessageBox("Error Installing Specfile", exception.Message);
-            }
-            */
+                try
+                {
+                    // Upload the current file and run the install on success
+                    _currentDirectory.UploadFile(GetCurrentFilePath(), RunInstall, FtpError);
+                }
+                catch (Exception exception)
+                {
+                    ErrorMessage("Error Installing Specfile!", exception.Message);
+                }
+            };
+
+            worker.RunWorkerAsync();
+        }
+
+        private void RunInstall(string fileName)
+        {
+            _currentDirectory.Install(GetCurrentFilePath(), InstallSuccess, InstallFail);
+        }
+
+        private void InstallSuccess(string fileName, int installSize)
+        {
+            MessageBox(String.Format("{0} successfully installed in {1}", fileName, _currentDirectory),
+                       String.Format("Install Size: {0:N0} Bytes", installSize));
+        }
+
+        private void InstallFail(string fileName, string errorMessage)
+        {
+            ErrorMessage(String.Format("{0} failed to install!", fileName), 
+                        errorMessage);
         }
 
         private void RunCurrentFile(object sender, EventArgs e)
@@ -299,6 +327,26 @@ namespace Visor
             return result;
         }
 
+        private void ErrorMessage(string title, string message)
+        {
+            // Show a Message Box to prove we were here
+            var uiShell = (IVsUIShell)GetService(typeof(SVsUIShell));
+            Guid clsid = Guid.Empty;
+            int result;
+            ErrorHandler.ThrowOnFailure(uiShell.ShowMessageBox(
+                0,
+                ref clsid,
+                title,
+                message,
+                string.Empty,
+                0,
+                OLEMSGBUTTON.OLEMSGBUTTON_OK,
+                OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST,
+                OLEMSGICON.OLEMSGICON_WARNING,
+                0, // false
+                out result));
+        }
+
         private int Confirmation(string title, string message)
         {
             // Show a Message Box to prove we were here
@@ -333,6 +381,11 @@ namespace Visor
             {
                 throw new Exception("There is no active document.", e);
             }
+        }
+
+        private void RunInBackground()
+        {
+            
         }
     }
 }

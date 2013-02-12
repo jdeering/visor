@@ -102,16 +102,44 @@ namespace Visor.Options
             );
         }
 
-        private FileType GetSymitarFileType(string path)
+        public void Install(string path, Action<string, int> SuccessCallback, Action<string, string> ErrorCallback)
         {
-            var extension = Path.GetExtension(path);
+            Symitar.File file = GetSymitarFile(path);
+            SpecfileResult result;
 
-            switch (extension)
+            try
             {
-                case ".rg": return FileType.RepGen;
-                case ".hlp": return FileType.Help;
-                default: return FileType.Letter;
+                if (!_session.LoggedIn)
+                {
+                    Disconnect();
+                    Connect();
+                }
+
+                result = _session.FileInstall(file);
             }
+            catch (Exception e)
+            {
+                ErrorCallback(file.Name, e.Message);
+                return;
+            }
+
+            if (result.PassedCheck)
+            {
+                SuccessCallback(file.Name, result.InstallSize);
+            }
+            else
+            {
+                ErrorCallback(file.Name, result.ErrorMessage);
+            }
+        }
+
+        private Symitar.File GetSymitarFile(string path)
+        {
+            return new Symitar.File
+                {
+                    Name = GetSymitarFileName(path), 
+                    Type = GetSymitarFileType(path)
+                };
         }
 
         private string GetSymitarFileName(string path)
@@ -122,6 +150,18 @@ namespace Visor.Options
                 return Path.GetFileName(path);
             else
                 return Path.GetFileNameWithoutExtension(path);
+        }
+
+        private FileType GetSymitarFileType(string path)
+        {
+            var extension = Path.GetExtension(path);
+
+            switch (extension)
+            {
+                case ".rg": return FileType.RepGen;
+                case ".hlp": return FileType.Help;
+                default: return FileType.Letter;
+            }
         }
     }
 }

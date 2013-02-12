@@ -79,9 +79,9 @@
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.4.5.11\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="Symitar, Version=1.1.4790.16407, Culture=neutral, PublicKeyToken=d1499deb6e5cfe47, processorArchitecture=MSIL">
+    <Reference Include="Symitar, Version=1.2.0.0, Culture=neutral, PublicKeyToken=d1499deb6e5cfe47, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\SymSharp.1.1.4790.16407\lib\net40\Symitar.dll</HintPath>
+      <HintPath>..\packages\SymSharp.1.2.0.0\lib\net40\Symitar.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

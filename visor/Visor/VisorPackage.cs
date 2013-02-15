@@ -329,7 +329,19 @@ namespace Visor
             runner.WorkerSupportsCancellation = false;
             runner.DoWork += _currentDirectory.Run;
             runner.RunWorkerCompleted +=
-                (sender, args) => MessageBox("Report Complete", String.Format("{0} has finished running.", fileName));
+                (sender, args) =>
+                    {
+                        if (args.Error != null)
+                            ErrorMessage("Report Running Failed!", args.Error.Message);
+                        else if (args.Cancelled)
+                            MessageBox("Run Report Cancelled", "");
+                        else
+                        {
+                            var reportSequences = _currentDirectory.GetReportSequences((int)args.Result);
+                            var sequenceList = reportSequences.Select(x => x.ToString()).Aggregate((a, b) => a + "\n" + b);
+                            MessageBox(String.Format("{0} has finished running.", fileName), sequenceList);
+                        }
+                    };
             runner.RunWorkerAsync(fileName);
         }
 

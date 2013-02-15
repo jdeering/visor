@@ -127,11 +127,24 @@ namespace Visor
         {
             var menuCommandID = new CommandID(GuidList.VisorCmdSet, (int)commandId);
             var menuItem = new OleMenuCommand(commandHandler, menuCommandID);
+            
+            if(commandId != PkgCmdIDList.SymDirectorySelect && commandId != PkgCmdIDList.SymDirectorySelectOptions)
+                menuItem.BeforeQueryStatus += CommandVisibility;
 
             var menuCommandService = GetService(typeof(IMenuCommandService)) as OleMenuCommandService;
             menuCommandService.AddCommand(menuItem);
 
             return menuItem;
+        }
+
+        private void CommandVisibility(object sender, EventArgs e)
+        {
+            var item = sender as OleMenuCommand;
+            var dte = GetGlobalService(typeof(DTE)) as DTE;
+
+            if (item == null || dte == null) return;
+
+            item.Enabled = (_currentDirectory != null && dte.ActiveDocument != null);
         }
 
         private void LoadSymDirectoryCombo(object sender, EventArgs e)
@@ -291,18 +304,45 @@ namespace Visor
 
         private void RunCurrentFile(object sender, EventArgs e)
         {
-            /*
-            try
+            var worker = new BackgroundWorker();
+
+            worker.DoWork += (o, args) =>
             {
-                var specfileName = Path.GetFileNameWithoutExtension(GetCurrentFilePath());
-                UploadCurrentFile(sender, e);
-                _server.Run(specfileName, _currentDirectory);
-            }
-            catch (Exception exception)
-            {
-                MessageBox("Error Running Report", exception.Message);
-            }
-            */
+                try
+                {
+                    // Upload the current file and run the install on success
+                    _currentDirectory.UploadFile(GetCurrentFilePath(), RunReport, FtpError);
+                }
+                catch (Exception exception)
+                {
+                    ErrorMessage("Error Installing Specfile!", exception.Message);
+                }
+            };
+
+            worker.RunWorkerAsync();
+        }
+
+        private void RunReport(string fileName)
+        {
+            var runner = new BackgroundWorker();
+            runner.WorkerReportsProgress = true;
+            runner.WorkerSupportsCancellation = false;
+            runner.DoWork += _currentDirectory.Run;
+            runner.RunWorkerCompleted +=
+                (sender, args) =>
+                    {
+                        if (args.Error != null)
+                            ErrorMessage("Report Running Failed!", args.Error.Message);
+                        else if (args.Cancelled)
+                            MessageBox("Run Report Cancelled", "");
+                        else
+                        {
+                            var reportSequences = _currentDirectory.GetReportSequences((int)args.Result);
+                            var sequenceList = reportSequences.Select(x => x.ToString()).Aggregate((a, b) => a + "\n" + b);
+                            MessageBox(String.Format("{0} has finished running.", fileName), sequenceList);
+                        }
+                    };
+            runner.RunWorkerAsync(fileName);
         }
 
         private int MessageBox(string title, string message)

@@ -38,6 +38,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <RunCodeAnalysis>true</RunCodeAnalysis>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="AlexPilotti.FTPS.Client">
@@ -79,9 +80,9 @@
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.4.5.11\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="Symitar, Version=1.2.0.0, Culture=neutral, PublicKeyToken=d1499deb6e5cfe47, processorArchitecture=MSIL">
+    <Reference Include="Symitar, Version=1.2.4794.28648, Culture=neutral, PublicKeyToken=432f92be6d634a43, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\SymSharp.1.2.0.0\lib\net40\Symitar.dll</HintPath>
+      <HintPath>..\packages\SymSharp.1.3.4\lib\net40\Symitar.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -222,7 +223,7 @@
     <None Include="Key.snk" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Toolbar.png" />
+    <Resource Include="Resources\Toolbar.bmp" />
     <VSCTCompile Include="Toolbar\Visor.vsct">
       <ResourceName>Menus.ctmenu</ResourceName>
       <SubType>Designer</SubType>

@@ -1,8 +1,10 @@
 ﻿using System;
+using System.ComponentModel;
 using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Symitar;
 using Visor.Net.Ftp;
@@ -162,6 +164,39 @@ namespace Visor.Options
                 case ".hlp": return FileType.Help;
                 default: return FileType.Letter;
             }
+        }
+
+        public void Run(object sender, DoWorkEventArgs args)
+        {
+            var worker = sender as BackgroundWorker;
+            if (worker == null) 
+                throw new ArgumentNullException("sender");
+
+            var file = new Symitar.File() {Name = (string) args.Argument, Type = FileType.RepGen};
+
+            var runResult = _session.FileRun(file, 
+                (code, description) => worker.ReportProgress(code * 10, description), 
+                GetPromptValue, 
+                3);
+
+            // This gets check every 30 seconds
+            while (_session.IsFileRunning(runResult.Sequence))
+            {
+                Thread.Sleep(30000);
+            }
+            var sequence = _session.GetBatchOutputSequence(file.Name, runResult.RunTime);
+            worker.ReportProgress(100, sequence);
+            args.Result = sequence;
+        }
+
+        public IEnumerable<int> GetReportSequences(int batchOutputSequence)
+        {
+            return _session.GetReportSequences(batchOutputSequence);
+        }
+
+        private string GetPromptValue(string prompt)
+        {
+            return "";
         }
     }
 }

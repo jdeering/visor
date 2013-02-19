@@ -166,27 +166,15 @@ namespace Visor.Options
             }
         }
 
-        public void Run(object sender, DoWorkEventArgs args)
+        public void Run(string fileName, RunWorkerCompletedEventHandler JobCompletionHandler)
         {
-            var worker = sender as BackgroundWorker;
-            if (worker == null) 
-                throw new ArgumentNullException("sender");
+            var file = new Symitar.File() { Name = (string)fileName, Type = FileType.RepGen };
 
-            var file = new Symitar.File() {Name = (string) args.Argument, Type = FileType.RepGen};
-
-            var runResult = _session.FileRun(file, 
-                (code, description) => worker.ReportProgress(code * 10, description), 
+            var runResult = _session.FileRun(file,
+                (code, desc) => { }, 
                 GetPromptValue, 
-                3);
-
-            // This gets check every 30 seconds
-            while (_session.IsFileRunning(runResult.Sequence))
-            {
-                Thread.Sleep(30000);
-            }
-            var sequence = _session.GetBatchOutputSequence(file.Name, runResult.RunTime);
-            worker.ReportProgress(100, sequence);
-            args.Result = sequence;
+                3,
+                JobCompletionHandler);
         }
 
         public IEnumerable<int> GetReportSequences(int batchOutputSequence)

@@ -315,7 +315,7 @@ namespace Visor
                 }
                 catch (Exception exception)
                 {
-                    ErrorMessage("Error Installing Specfile!", exception.Message);
+                    ErrorMessage("Error Running Report!", exception.Message);
                 }
             };
 
@@ -324,25 +324,28 @@ namespace Visor
 
         private void RunReport(string fileName)
         {
-            var runner = new BackgroundWorker();
-            runner.WorkerReportsProgress = true;
-            runner.WorkerSupportsCancellation = false;
-            runner.DoWork += _currentDirectory.Run;
-            runner.RunWorkerCompleted +=
-                (sender, args) =>
-                    {
-                        if (args.Error != null)
-                            ErrorMessage("Report Running Failed!", args.Error.Message);
-                        else if (args.Cancelled)
-                            MessageBox("Run Report Cancelled", "");
-                        else
-                        {
-                            var reportSequences = _currentDirectory.GetReportSequences((int)args.Result);
-                            var sequenceList = reportSequences.Select(x => x.ToString()).Aggregate((a, b) => a + "\n" + b);
-                            MessageBox(String.Format("{0} has finished running.", fileName), sequenceList);
-                        }
-                    };
-            runner.RunWorkerAsync(fileName);
+            _currentDirectory.Run(fileName, ReportCompleted);
+        }
+
+        private void ReportCompleted(object sender, RunWorkerCompletedEventArgs args)
+        {
+            if (args.Error != null)
+            {
+                ErrorMessage("Run Report Failed!", args.Error.Message);
+            }
+            else if (args.Cancelled)
+            {
+                MessageBox("Run Report Cancelled", "");
+            }
+            else
+            {
+                var fileName = (string) ((object[]) args.Result)[0];
+                var sequence = (int) ((object[]) args.Result)[1];
+
+                var reportSequences = _currentDirectory.GetReportSequences(sequence);
+                var sequenceList = reportSequences.Select(x => x.ToString()).Aggregate((a, b) => a + "\n" + b);
+                MessageBox(String.Format("{0} has finished running.", fileName), sequenceList);
+            }
         }
 
         private int MessageBox(string title, string message)

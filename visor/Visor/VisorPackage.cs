@@ -12,7 +12,9 @@ using Microsoft.Internal.VisualStudio.PlatformUI;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
+using Symitar;
 using Visor.LanguageService;
+using Visor.ReportRunner;
 using Visor.Toolbar;
 using Visor.Options;
 
@@ -74,12 +76,18 @@ namespace Visor
     // -------------------------------------------------------------------------------
     [ProvideMenuResource("Menus.ctmenu", 1)]
     [ProvideOptionPage(typeof(VisorOptions), "Visor", "General", 0, 0, true)]
+
+    // -------------------------------------------------------------------------------
+    // Tool windows
+    // -------------------------------------------------------------------------------
+    [ProvideToolWindow(typeof(ReportToolWindow), Style = VsDockStyle.Tabbed, Window = GuidList.VisorReportRunnerWindowString)]
     public sealed class VisorPackage : IronyPackage
     {
         private string _comboSelection;
         private SymDirectory _currentDirectory;
         private List<SymDirectory> _directories;
 
+        public ToolWindowPane ReportRunnerToolWindow;
 
         /// <summary>
         /// Default constructor of the package.
@@ -103,6 +111,8 @@ namespace Visor
             Debug.WriteLine (string.Format(CultureInfo.CurrentCulture, "Entering Initialize() of: {0}", this.ToString()));
             base.Initialize();
 
+            ReportRunnerToolWindow = FindToolWindow(typeof (ReportToolWindow), 0, true);
+            ShowReportWindow();
             RegisterProjectFactory(new Visor.Project.ProjectFactory(this));
             RegisterMenuCommands();
         }
@@ -202,13 +212,23 @@ namespace Visor
             {
                 _currentDirectory = _directories.First();
                 StartSessionAsync();
-                _comboSelection = String.Format("Sym {0} ({1})", _currentDirectory.Institution, _currentDirectory.Server.Host);
+                _comboSelection = _currentDirectory.ToString();
             }
         }
 
         private void StartSessionAsync()
         {
-            System.Threading.ThreadPool.QueueUserWorkItem(delegate { _currentDirectory.Connect(); }, null);
+            System.Threading.ThreadPool.QueueUserWorkItem(delegate
+                {
+                    try
+                    {
+                        _currentDirectory.Connect();
+                    }
+                    catch (Exception e)
+                    {
+                        ErrorMessage(String.Format("Error logging into {0}", _currentDirectory), e.Message);
+                    }
+                }, null);
         }
 
         private void LoadOptions()
@@ -273,6 +293,11 @@ namespace Visor
             {
                 try
                 {
+                    if (!_currentDirectory.LoggedIn)
+                    {
+                        throw new InvalidOperationException("Not logged in");
+                    }
+
                     // Upload the current file and run the install on success
                     _currentDirectory.UploadFile(GetCurrentFilePath(), RunInstall, FtpError);
                 }
@@ -310,6 +335,11 @@ namespace Visor
             {
                 try
                 {
+                    if (!_currentDirectory.LoggedIn)
+                    {
+                        throw new InvalidOperationException("Not logged in");
+                    }
+
                     // Upload the current file and run the install on success
                     _currentDirectory.UploadFile(GetCurrentFilePath(), RunReport, FtpError);
                 }
@@ -324,7 +354,52 @@ namespace Visor
 
         private void RunReport(string fileName)
         {
-            _currentDirectory.Run(fileName, ReportCompleted);
+            ShowReportWindow();
+            Dispatch(() => ((ReportRunnerControl)ReportRunnerToolWindow.Content).AddReport(fileName));
+            _currentDirectory.Run(fileName, UpdateReportStatus, ReportCompleted);
+        }
+
+        private void UpdateReportStatus(SymSession.RunState state, object data)
+        {
+            string file;
+            int sequence;
+            switch (state)
+            {
+                case SymSession.RunState.Running:
+                    sequence = (int) data;
+                    ((ReportRunnerControl)ReportRunnerToolWindow.Content).SetSequence(sequence);
+                    ((ReportRunnerControl)ReportRunnerToolWindow.Content).UpdateStatus(sequence, "Running");
+                    break;
+                case SymSession.RunState.Failed:
+                    file = (string) data;
+                    ((ReportRunnerControl)ReportRunnerToolWindow.Content).UpdateStatus(file, "Failed");
+                    break;
+                case SymSession.RunState.Cancelled:
+                    file = (string)data;
+                    ((ReportRunnerControl)ReportRunnerToolWindow.Content).UpdateStatus(file, "Cancelled");
+                    break;
+            }
+        }
+
+        private void ShowReportWindow()
+        {
+            try
+            {
+                var pane = FindToolWindow(typeof(ReportToolWindow), 0, true);
+                var frame = pane.Frame as IVsWindowFrame;
+                ErrorHandler.ThrowOnFailure(frame.Show());
+            }
+            catch
+            {
+                throw new COMException("Error opening Report Tool Window");
+            }
+        }
+
+        private void Dispatch(Action action)
+        {
+            System.Windows.Application.Current.Dispatcher.Invoke(
+                System.Windows.Threading.DispatcherPriority.Normal,
+                action);
         }
 
         private void ReportCompleted(object sender, RunWorkerCompletedEventArgs args)
@@ -340,11 +415,13 @@ namespace Visor
             else
             {
                 var fileName = (string) ((object[]) args.Result)[0];
-                var sequence = (int) ((object[]) args.Result)[1];
+                var jobSequence = (int) ((object[]) args.Result)[1];
+                var reportSequence = (int) ((object[]) args.Result)[2];
 
-                var reportSequences = _currentDirectory.GetReportSequences(sequence);
+                var reportSequences = _currentDirectory.GetReportSequences(reportSequence);
                 var sequenceList = reportSequences.Select(x => x.ToString()).Aggregate((a, b) => a + "\n" + b);
-                MessageBox(String.Format("{0} has finished running.", fileName), sequenceList);
+                //MessageBox(String.Format("{0} has finished running.", fileName), sequenceList);
+                Dispatch(() => ((ReportRunnerControl)ReportRunnerToolWindow.Content).UpdateStatus(jobSequence, "Complete"));
             }
         }
 

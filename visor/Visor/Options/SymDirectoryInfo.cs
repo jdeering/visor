@@ -21,6 +21,11 @@ namespace Visor.Options
 
         private string[] ExtensionsToKeep;
 
+        public bool LoggedIn
+        {
+            get { return _session.LoggedIn; }
+        }
+
         public SymDirectory()
         {
             Initialize(new SymServerInfo(), 999, "");
@@ -54,7 +59,10 @@ namespace Visor.Options
         {
             _session = new SymSession(Institution);
             _session.Connect(Server.Host, Server.TelnetPort);
-            _session.Login(Server.AixUsername, Server.AixPassword, UserId);
+            if (!_session.Login(Server.AixUsername, Server.AixPassword, UserId))
+            {
+                throw new Exception(_session.Error);
+            }
         }
 
         public void Disconnect()
@@ -166,12 +174,12 @@ namespace Visor.Options
             }
         }
 
-        public void Run(string fileName, RunWorkerCompletedEventHandler JobCompletionHandler)
+        public void Run(string fileName, SymSession.FileRunStatus ProgressHandler, RunWorkerCompletedEventHandler JobCompletionHandler)
         {
-            var file = new Symitar.File() { Name = (string)fileName, Type = FileType.RepGen };
+            var file = new Symitar.File() { Name = fileName, Type = FileType.RepGen };
 
-            var runResult = _session.FileRun(file,
-                (code, desc) => { }, 
+            _session.FileRun(file,
+                ProgressHandler, 
                 GetPromptValue, 
                 3,
                 JobCompletionHandler);

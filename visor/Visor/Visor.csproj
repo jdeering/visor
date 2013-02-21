@@ -37,10 +37,12 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <RunCodeAnalysis>true</RunCodeAnalysis>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisIgnoreGeneratedCode>false</CodeAnalysisIgnoreGeneratedCode>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Accessibility" />
     <Reference Include="AlexPilotti.FTPS.Client">
       <HintPath>..\packages\AlexFTPS.1.1.0.27735\lib\net20\AlexPilotti.FTPS.Client.dll</HintPath>
     </Reference>
@@ -80,17 +82,26 @@
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.4.5.11\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="Symitar, Version=1.2.4798.17710, Culture=neutral, PublicKeyToken=432f92be6d634a43, processorArchitecture=MSIL">
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="PresentationUI, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="ReachFramework" />
+    <Reference Include="Symitar, Version=1.2.4800.17453, Culture=neutral, PublicKeyToken=432f92be6d634a43, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\SymSharp.1.3.12\lib\net40\Symitar.dll</HintPath>
+      <HintPath>..\packages\SymSharp.1.3.16\lib\net40\Symitar.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
     <Reference Include="System.Design" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Printing" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xaml" />
     <Reference Include="System.Xml" />
+    <Reference Include="UIAutomationProvider" />
+    <Reference Include="UIAutomationTypes" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
@@ -184,6 +195,12 @@
     </Compile>
     <Compile Include="Project\BasicProjectNode.cs" />
     <Compile Include="Project\ProjectFactory.cs" />
+    <Compile Include="Properties\Annotations.cs" />
+    <Compile Include="ReportRunner\BatchJob.cs" />
+    <Compile Include="ReportRunner\ReportRunnerControl.xaml.cs">
+      <DependentUpon>ReportRunnerControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ReportRunner\ReportToolWindow.cs" />
     <Compile Include="Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -236,7 +253,12 @@
     <ZipItem Include="Project\Templates\Files\HTML\HTMLPage1.html" />
     <Content Include="Resources\Package.ico" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Page Include="ReportRunner\ReportRunnerControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
   <PropertyGroup>
     <UseCodebase>true</UseCodebase>
   </PropertyGroup>

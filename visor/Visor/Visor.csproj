@@ -38,7 +38,6 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <RunCodeAnalysis>false</RunCodeAnalysis>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
     <CodeAnalysisIgnoreGeneratedCode>false</CodeAnalysisIgnoreGeneratedCode>
   </PropertyGroup>
   <ItemGroup>
@@ -227,11 +226,23 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <ZipItem Include="Project\Templates\Files\Batch\Program.rg" />
-    <ZipItem Include="Project\Templates\Files\Demand\Program.rg" />
-    <ZipItem Include="Project\Templates\Files\Help\Helpfile.hlp" />
-    <ZipItem Include="Project\Templates\Files\Letter\Letterfile.ltr" />
-    <ZipProject Include="Project\Templates\Projects\BasicProject\Basic.symproj" />
+    <ZipItem Include="Project\Templates\ItemTemplate\Batch\Batch.rg" />
+    <ZipItem Include="Project\Templates\ItemTemplate\Demand\Demand.rg" />
+    <ZipItem Include="Project\Templates\ItemTemplate\Help\Help.hlp" />
+    <ZipItem Include="Project\Templates\ItemTemplate\Letter\Letter.ltr" />
+    <ZipItem Include="Project\Templates\ItemTemplate\HTML\HTMLPage.html" />
+    <ZipItem Include="Project\Templates\ItemTemplate\Batch\Batch.vstemplate" />
+    <ZipItem Include="Project\Templates\ItemTemplate\Demand\Demand.vstemplate" />
+    <ZipItem Include="Project\Templates\ItemTemplate\Help\Help.vstemplate" />
+    <ZipItem Include="Project\Templates\ItemTemplate\HTML\HTMLPage.vstemplate" />
+    <ZipItem Include="Project\Templates\ItemTemplate\Letter\Letter.vstemplate" />
+      
+    <ZipProject Include="Project\Templates\ProjectTemplate\Basic\Basic.symproj">
+      <OutputSubPath>Visor\BasicProject</OutputSubPath>
+    </ZipProject>
+    <ZipProject Include="Project\Templates\ProjectTemplate\Basic\Basic.ico">
+      <OutputSubPath>Visor\BasicProject</OutputSubPath>
+    </ZipProject>
     <None Include="source.extension.vsixmanifest">
       <SubType>Designer</SubType>
     </None>
@@ -249,8 +260,6 @@
     <EmbeddedResource Include="Resources\db.txt" />
     <EmbeddedResource Include="Resources\functions.txt" />
     <EmbeddedResource Include="Resources\keywords.txt" />
-    <ZipProject Include="Project\Templates\Projects\BasicProject\Basic.ico" />
-    <ZipItem Include="Project\Templates\Files\HTML\HTMLPage1.html" />
     <Content Include="Resources\Package.ico" />
   </ItemGroup>
   <ItemGroup>

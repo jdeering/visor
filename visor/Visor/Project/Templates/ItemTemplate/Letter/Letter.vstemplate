@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<VSTemplate Type="Item" Version="3.0.0"
+    xmlns="http://schemas.microsoft.com/developer/vstemplate/2005">
+  <TemplateData>
+    <Name>Letter File</Name>
+    <Description>Creates a new Symitar Letter File</Description>
+    <ProjectType>VisorProject</ProjectType>
+    <DefaultName>Letter.ltr</DefaultName>
+    <ProvideDefaultName>true</ProvideDefaultName>
+    <SortOrder>300</SortOrder>
+  </TemplateData>
+  <TemplateContent>
+    <ProjectItem ReplaceParameters="true" TargetFileName="$fileinputname$.cs">Letter.ltr</ProjectItem>
+  </TemplateContent>
+</VSTemplate>

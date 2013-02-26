@@ -61,13 +61,13 @@ namespace Visor
         "Repgen Project Files (*.symproj);*.symproj",
         "symproj", "symproj",
         @"Project\Templates\Projects\BasicProject",
-        LanguageVsTemplate = "BasicProject")]
+        LanguageVsTemplate = "VisorProject")]
 
-    [ProvideProjectItem(GuidList.VisorPackageString, "Code", @"Project\Templates\Files\Batch", 1)]
-    [ProvideProjectItem(GuidList.VisorPackageString, "Code", @"Project\Templates\Files\Demand", 2)]
-    [ProvideProjectItem(GuidList.VisorPackageString, "Data", @"Project\Templates\Files\Letter", 3)]
-    [ProvideProjectItem(GuidList.VisorPackageString, "Data", @"Project\Templates\Files\Help", 4)]
-    [ProvideProjectItem(GuidList.VisorPackageString, "Web", @"Project\Templates\Files\HTML", 5)]
+    [ProvideProjectItem(GuidList.VisorPackageString, "Code", @"Project\Templates\ItemTemplate\Batch", 1)]
+    [ProvideProjectItem(GuidList.VisorPackageString, "Code", @"Project\Templates\ItemTemplate\Demand", 2)]
+    [ProvideProjectItem(GuidList.VisorPackageString, "Data", @"Project\Templates\ItemTemplate\Letter", 3)]
+    [ProvideProjectItem(GuidList.VisorPackageString, "Data", @"Project\Templates\ItemTemplate\Help", 4)]
+    [ProvideProjectItem(GuidList.VisorPackageString, "Web", @"Project\Templates\ItemTemplate\HTML", 5)]
 
     // -------------------------------------------------------------------------------
     // Toolbar resource

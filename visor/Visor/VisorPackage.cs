@@ -355,7 +355,7 @@ namespace Visor
         private void RunReport(string fileName)
         {
             ShowReportWindow();
-            Dispatch(() => ((ReportRunnerControl)ReportRunnerToolWindow.Content).AddReport(fileName));
+            Dispatch(() => ((ReportRunnerControl)ReportRunnerToolWindow.Content).AddBatchJob(fileName));
             _currentDirectory.Run(fileName, UpdateReportStatus, ReportCompleted);
         }
 
@@ -414,14 +414,23 @@ namespace Visor
             }
             else
             {
-                var fileName = (string) ((object[]) args.Result)[0];
                 var jobSequence = (int) ((object[]) args.Result)[1];
                 var reportSequence = (int) ((object[]) args.Result)[2];
 
                 var reportSequences = _currentDirectory.GetReportSequences(reportSequence);
-                var sequenceList = reportSequences.Select(x => x.ToString()).Aggregate((a, b) => a + "\n" + b);
-                //MessageBox(String.Format("{0} has finished running.", fileName), sequenceList);
+
                 Dispatch(() => ((ReportRunnerControl)ReportRunnerToolWindow.Content).UpdateStatus(jobSequence, "Complete"));
+
+                var job = ((ReportRunnerControl)ReportRunnerToolWindow.Content).GetJob(jobSequence);
+
+                if (job != null)
+                {
+                    job.Reports = new ReportList();
+                    foreach (var sequence in reportSequences)
+                    {
+                        job.Reports.Add(new Report { Sequence = sequence, Title = "" });
+                    }
+                }
             }
         }
 
@@ -501,11 +510,6 @@ namespace Visor
             {
                 throw new Exception("There is no active document.", e);
             }
-        }
-
-        private void RunInBackground()
-        {
-            
         }
     }
 }

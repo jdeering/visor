@@ -26,7 +26,6 @@ namespace Visor.ReportRunner
         private BatchJobs _jobs
         {
             get { return ((BatchJobs) Resources["Jobs"]); }
-            set { Resources["Jobs"] = value; }
         }
 
         public ReportRunnerControl()
@@ -34,7 +33,7 @@ namespace Visor.ReportRunner
             InitializeComponent();
         }
 
-        public void AddReport(string file)
+        public void AddBatchJob(string file)
         {
             _jobs.Add(new BatchJob
                 {
@@ -58,6 +57,11 @@ namespace Visor.ReportRunner
         public void UpdateStatus(string fileName, string status)
         {
             _jobs.Last(x => x.FileName == fileName).Status = status;
+        }
+
+        public BatchJob GetJob(int sequence)
+        {
+            return _jobs.Last(x => x.Sequence == sequence);
         }
     }
 }

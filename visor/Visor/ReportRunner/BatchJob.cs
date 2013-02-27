@@ -13,6 +13,7 @@ namespace Visor.ReportRunner
         private int _sequence;
         private string _status;
         private string _fileName;
+        private ReportList _reports;
 
         public int Sequence
         {
@@ -43,6 +44,17 @@ namespace Visor.ReportRunner
             }
         }
 
+        public ReportList Reports
+        {
+            get { return _reports; }
+            set
+            {
+                if (value == _reports) return;
+                _reports = value;
+                OnPropertyChanged();
+            }
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]
@@ -53,7 +65,17 @@ namespace Visor.ReportRunner
         }
     }
 
+    public class Report
+    {
+        public string Title { get; set; }
+        public int Sequence { get; set; }
+    }
+
     public class BatchJobs : ObservableCollection<BatchJob>
+    {
+    }
+
+    public class ReportList : ObservableCollection<Report>
     {
     }
 }

@@ -23,26 +23,58 @@
             </Style.Triggers>
         </Style>
 
-        <DataTemplate x:Key="JobTemplate">
-            <DockPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                <TextBlock Text="{Binding Path=Sequence}" Margin="5,0,0,0" Style="{StaticResource OutputColoring}" />
-                <TextBlock Text="{Binding Path=FileName}" Margin="20,0,0,0" Style="{StaticResource OutputColoring}" />
-                <TextBlock Text="{Binding Path=Status}" Margin ="0,0,10,0"  HorizontalAlignment="Right" Style="{StaticResource OutputColoring}" />
-            </DockPanel>
-        </DataTemplate>
+        <local:ReportList x:Key="TestReports">
+            <local:Report Title="Generated Report" Sequence="98" />
+            <local:Report Title="Generated Report 2" Sequence="99" />
+        </local:ReportList>
 
         <local:BatchJobs x:Key="Jobs">
+            <!--
+            <local:BatchJob FileName="Test1" Status="Complete" Sequence="100" Reports="{StaticResource TestReports}" />
+            <local:BatchJob FileName="Test2" Status="Running" Sequence="103" />
+            <local:BatchJob FileName="Test3" Status="Failed" Sequence="104" />
+            -->
         </local:BatchJobs>
+        
     </UserControl.Resources>
-    
-    <Grid>
-        <DockPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10,10,10,10">
-            <ListBox DockPanel.Dock="Top" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
-                     x:Name="JobList"
-                     HorizontalContentAlignment="Stretch"
-                      ItemsSource="{Binding Source={StaticResource Jobs}}"
-                      ItemTemplate="{StaticResource JobTemplate}">
-            </ListBox>
+
+    <Grid x:Name="Grid">
+        <DockPanel x:Name="DockPanel" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5,5,5,5"
+                      Width="{Binding Width, ElementName=Grid, Mode=Default}">
+            <TreeView x:Name="JobList"
+                      Width="{Binding Width, ElementName=DockPanel, Mode=Default}"
+                      DockPanel.Dock="Top" 
+                      HorizontalAlignment="Stretch" 
+                      VerticalAlignment="Stretch"
+                      HorizontalContentAlignment="Stretch"
+                      VerticalContentAlignment="Stretch"
+                      ItemsSource="{Binding Source={StaticResource Jobs}}">
+
+                <TreeView.ItemContainerStyle>
+                    <Style TargetType="{x:Type TreeViewItem}">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                    </Style>
+                </TreeView.ItemContainerStyle>
+                
+                <TreeView.Resources>
+                    
+                    <HierarchicalDataTemplate DataType="{x:Type local:BatchJob}" ItemsSource="{Binding Reports}">
+                        <DockPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="{Binding Width, ElementName=JobList, Mode=Default}" Margin="0,1,0,1" >
+                            <TextBlock Text="{Binding Path=Sequence}" Style="{StaticResource OutputColoring}" />
+                            <TextBlock Text="{Binding Path=FileName}" Margin="20,0,0,0" Style="{StaticResource OutputColoring}" />
+                            <TextBlock Text="{Binding Path=Status}" Margin="5,0,0,0" HorizontalAlignment="Right" Style="{StaticResource OutputColoring}" />
+                        </DockPanel>
+                    </HierarchicalDataTemplate>
+
+                    <HierarchicalDataTemplate DataType="{x:Type local:Report}">
+                        <DockPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="{Binding Width, ElementName=JobList, Mode=Default}">
+                            <TextBlock Text="{Binding Path=Sequence}" />
+                            <TextBlock Text="{Binding Path=Title}" Margin="20,0,0,0" />
+                        </DockPanel>
+                    </HierarchicalDataTemplate>
+                </TreeView.Resources>
+                
+            </TreeView>
         </DockPanel>
     </Grid>
 </UserControl>

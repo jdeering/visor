@@ -381,27 +381,6 @@ namespace Visor
             }
         }
 
-        private void ShowReportWindow()
-        {
-            try
-            {
-                var pane = FindToolWindow(typeof(ReportToolWindow), 0, true);
-                var frame = pane.Frame as IVsWindowFrame;
-                ErrorHandler.ThrowOnFailure(frame.Show());
-            }
-            catch
-            {
-                throw new COMException("Error opening Report Tool Window");
-            }
-        }
-
-        private void Dispatch(Action action)
-        {
-            System.Windows.Application.Current.Dispatcher.Invoke(
-                System.Windows.Threading.DispatcherPriority.Normal,
-                action);
-        }
-
         private void ReportCompleted(object sender, RunWorkerCompletedEventArgs args)
         {
             if (args.Error != null)
@@ -428,9 +407,24 @@ namespace Visor
                     job.Reports = new ReportList();
                     foreach (var sequence in reportSequences)
                     {
-                        job.Reports.Add(new Report { Sequence = sequence, Title = "" });
+                        var title = _currentDirectory.GetReportTitle(sequence);
+                        job.Reports.Add(new Report { Sequence = sequence, Title = title });
                     }
                 }
+            }
+        }
+
+        private void ShowReportWindow()
+        {
+            try
+            {
+                var pane = FindToolWindow(typeof(ReportToolWindow), 0, true);
+                var frame = pane.Frame as IVsWindowFrame;
+                ErrorHandler.ThrowOnFailure(frame.Show());
+            }
+            catch
+            {
+                throw new COMException("Error opening Report Tool Window");
             }
         }
 
@@ -510,6 +504,13 @@ namespace Visor
             {
                 throw new Exception("There is no active document.", e);
             }
+        }
+
+        private void Dispatch(Action action)
+        {
+            System.Windows.Application.Current.Dispatcher.Invoke(
+                System.Windows.Threading.DispatcherPriority.Normal,
+                action);
         }
     }
 }

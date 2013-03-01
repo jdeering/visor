@@ -130,8 +130,7 @@ namespace Visor.LanguageService
                 | ToTerm("setup") + statements + ToTerm("end");
 
             selectSection.Rule
-                = ToTerm("select") + ToTerm("end")
-                | ToTerm("select") + expression + ToTerm("end");
+                = ToTerm("select") + (Empty | expression | ToTerm("all") | ToTerm("none")) + ToTerm("end");
 
             sortSection.Rule
                 = ToTerm("sort") + ToTerm("end")
@@ -223,10 +222,10 @@ namespace Visor.LanguageService
 
             statement.Rule
                 = semiStatement
-                | "while" + expression + block
-                | "for" + forHeader + block
-                | "for each" + forEachHeader + block
-                | "if" + expression + block;
+                | ToTerm("while") + expression + block
+                | ToTerm("for") + ToTerm("each") + forEachHeader + block
+                | ToTerm("for") + forHeader + block
+                | ToTerm("if") + expression + ToTerm("then") + block;
 
             parenExpression.Rule = ToTerm("(") + expression + ")";
 
@@ -238,6 +237,7 @@ namespace Visor.LanguageService
             semiStatement.Rule
                 = assignExpression
                 | includeStatement
+                | functionCall
                 | procedureCall
                 | printStatement
                 | headerSection;
@@ -322,10 +322,12 @@ namespace Visor.LanguageService
                 | "longname";
 
             functionCall.Rule = functionName + parenArguments;
-            functionName.Rule
-                = ToTerm("capitalize")
-                | "lowercase"
-                | "uppercase";
+
+            functionName.Rule = ToTerm(RepgenFunctions.List[0].Name);
+            foreach (var name in RepgenFunctions.List.Select(x => x.Name))
+            {
+                functionName.Rule |= ToTerm(name);
+            }
 
             #endregion
 

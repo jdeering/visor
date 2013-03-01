@@ -64,7 +64,7 @@ namespace Visor
         "Repgen Project Files (*.symproj);*.symproj",
         "symproj", "symproj",
         @"Project\Templates\Projects\BasicProject",
-        LanguageVsTemplate = "VisorProject")]
+        LanguageVsTemplate = "Repgen")]
 
     [ProvideProjectItem(GuidList.VisorPackageString, "Code", @"Project\Templates\ItemTemplate\Batch", 1)]
     [ProvideProjectItem(GuidList.VisorPackageString, "Code", @"Project\Templates\ItemTemplate\Demand", 2)]

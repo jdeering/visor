@@ -4,12 +4,12 @@
   <TemplateData>
     <Name>HTML</Name>
     <Description>Creates a HTML Letter File</Description>
-    <ProjectType>VisorProject</ProjectType>
+    <ProjectType>Repgen</ProjectType>
     <DefaultName>HTMLPage.html</DefaultName>
     <ProvideDefaultName>true</ProvideDefaultName>
     <SortOrder>400</SortOrder>
   </TemplateData>
   <TemplateContent>
-    <ProjectItem ReplaceParameters="true" TargetFileName="$fileinputname$.cs">HTMLPage.html</ProjectItem>
+    <ProjectItem ReplaceParameters="true" TargetFileName="$fileinputname$.html">HTMLPage.html</ProjectItem>
   </TemplateContent>
 </VSTemplate>

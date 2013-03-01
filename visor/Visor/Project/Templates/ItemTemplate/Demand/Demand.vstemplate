@@ -4,12 +4,12 @@
   <TemplateData>
     <Name>On-Demand RepGen</Name>
     <Description>Creates a new RepGen source code file</Description>
-    <ProjectType>VisorProject</ProjectType>
+    <ProjectType>Repgen</ProjectType>
     <DefaultName>Program.rg</DefaultName>
     <ProvideDefaultName>true</ProvideDefaultName>
     <SortOrder>200</SortOrder>
   </TemplateData>
   <TemplateContent>
-    <ProjectItem ReplaceParameters="true" TargetFileName="$fileinputname$.cs">Demand.rg</ProjectItem>
+    <ProjectItem ReplaceParameters="true" TargetFileName="$fileinputname$.rg">Demand.rg</ProjectItem>
   </TemplateContent>
 </VSTemplate>

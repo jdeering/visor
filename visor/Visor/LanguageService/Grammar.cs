@@ -214,7 +214,8 @@ namespace Visor.LanguageService
 
             block.Rule
                 = ToTerm("do") + "end"
-                | "do" + statements + "end";
+                | "do" + statements + "end"
+                | statement;
 
             statements.Rule
                 = statements + statement
@@ -344,10 +345,9 @@ namespace Visor.LanguageService
             RegisterBracePair("(", ")");
             RegisterBracePair("[", "]");
 
-            var sections = new[] { "do", "select", "define", "print", "setup", "sort", "total", "headers" };
-            foreach (var section in sections)
+            foreach (var brace in new[] { "do", "select", "define", "print", "setup", "sort", "total", "headers", "procedure" })
             {
-                RegisterBracePair(section, "end");
+                RegisterBracePair(brace, "end");
             }
         }
 

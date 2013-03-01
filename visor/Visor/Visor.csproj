@@ -247,12 +247,10 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-
-    <Content Include="bin\Release\ProjectTemplates\Visor\BasicProject\Basic.zip">
+    <Content Include="bin\Release\ProjectTemplates\Basic.zip">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    
     <None Include="packages.config" />
     <ZipItem Include="Project\Templates\ItemTemplate\Batch\Batch.rg" />
     <ZipItem Include="Project\Templates\ItemTemplate\Demand\Demand.rg" />
@@ -287,6 +285,7 @@
     <EmbeddedResource Include="Resources\db.txt" />
     <EmbeddedResource Include="Resources\functions.txt" />
     <EmbeddedResource Include="Resources\keywords.txt" />
+    <ZipProject Include="Project\Templates\ProjectTemplate\Basic\Basic.vstemplate" />
     <Content Include="Resources\Package.ico" />
   </ItemGroup>
   <ItemGroup>

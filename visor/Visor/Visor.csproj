@@ -85,9 +85,9 @@
     <Reference Include="PresentationFramework" />
     <Reference Include="PresentationUI, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="ReachFramework" />
-    <Reference Include="Symitar, Version=1.2.4800.17453, Culture=neutral, PublicKeyToken=432f92be6d634a43, processorArchitecture=MSIL">
+    <Reference Include="Symitar, Version=1.3.4807.24924, Culture=neutral, PublicKeyToken=432f92be6d634a43, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\SymSharp.1.3.16\lib\net40\Symitar.dll</HintPath>
+      <HintPath>..\packages\SymSharp.1.3.18\lib\net40\Symitar.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -152,6 +152,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Extensions\Crypto.cs" />
+    <Compile Include="Extensions\FileHandler.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Guids.cs" />
     <Compile Include="LanguageService\AuthoringScope.cs" />
@@ -196,6 +197,7 @@
     <Compile Include="Project\ProjectFactory.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="ReportRunner\BatchJob.cs" />
+    <Compile Include="ReportRunner\Report.cs" />
     <Compile Include="ReportRunner\ReportRunnerControl.xaml.cs">
       <DependentUpon>ReportRunnerControl.xaml</DependentUpon>
     </Compile>
@@ -236,7 +238,6 @@
     <ZipItem Include="Project\Templates\ItemTemplate\Help\Help.vstemplate" />
     <ZipItem Include="Project\Templates\ItemTemplate\HTML\HTMLPage.vstemplate" />
     <ZipItem Include="Project\Templates\ItemTemplate\Letter\Letter.vstemplate" />
-      
     <ZipProject Include="Project\Templates\ProjectTemplate\Basic\Basic.symproj">
       <OutputSubPath>Visor\BasicProject</OutputSubPath>
     </ZipProject>

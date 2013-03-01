@@ -13,6 +13,7 @@ using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Symitar;
+using Visor.Extensions;
 using Visor.LanguageService;
 using Visor.ReportRunner;
 using Visor.Toolbar;
@@ -137,8 +138,10 @@ namespace Visor
         {
             var menuCommandID = new CommandID(GuidList.VisorCmdSet, (int)commandId);
             var menuItem = new OleMenuCommand(commandHandler, menuCommandID);
-            
-            if(commandId != PkgCmdIDList.SymDirectorySelect && commandId != PkgCmdIDList.SymDirectorySelectOptions)
+
+            if (commandId == PkgCmdIDList.InstallSpecfile || commandId == PkgCmdIDList.RunReport)
+                menuItem.BeforeQueryStatus += CommandRequiresLogin;
+            else if(commandId != PkgCmdIDList.SymDirectorySelect && commandId != PkgCmdIDList.SymDirectorySelectOptions)
                 menuItem.BeforeQueryStatus += CommandVisibility;
 
             var menuCommandService = GetService(typeof(IMenuCommandService)) as OleMenuCommandService;
@@ -155,6 +158,16 @@ namespace Visor
             if (item == null || dte == null) return;
 
             item.Enabled = (_currentDirectory != null && dte.ActiveDocument != null);
+        }
+
+        private void CommandRequiresLogin(object sender, EventArgs e)
+        {
+            var item = sender as OleMenuCommand;
+            var dte = GetGlobalService(typeof(DTE)) as DTE;
+
+            if (item == null || dte == null) return;
+
+            item.Enabled = (_currentDirectory != null && dte.ActiveDocument != null && _currentDirectory.LoggedIn);
         }
 
         private void LoadSymDirectoryCombo(object sender, EventArgs e)
@@ -355,7 +368,7 @@ namespace Visor
         private void RunReport(string fileName)
         {
             ShowReportWindow();
-            Dispatch(() => ((ReportRunnerControl)ReportRunnerToolWindow.Content).AddBatchJob(fileName));
+            Dispatch(() => ((ReportRunnerControl)ReportRunnerToolWindow.Content).AddBatchJob(fileName, _currentDirectory));
             _currentDirectory.Run(fileName, UpdateReportStatus, ReportCompleted);
         }
 
@@ -394,9 +407,9 @@ namespace Visor
             else
             {
                 var jobSequence = (int) ((object[]) args.Result)[1];
-                var reportSequence = (int) ((object[]) args.Result)[2];
+                var outputSequence = (int) ((object[]) args.Result)[2];
 
-                var reportSequences = _currentDirectory.GetReportSequences(reportSequence);
+                var reports = _currentDirectory.GetReports(outputSequence);
 
                 Dispatch(() => ((ReportRunnerControl)ReportRunnerToolWindow.Content).UpdateStatus(jobSequence, "Complete"));
 
@@ -405,10 +418,10 @@ namespace Visor
                 if (job != null)
                 {
                     job.Reports = new ReportList();
-                    foreach (var sequence in reportSequences)
+                    foreach (var report in reports)
                     {
-                        var title = _currentDirectory.GetReportTitle(sequence);
-                        job.Reports.Add(new Report { Sequence = sequence, Title = title });
+                        var r = report;
+                        Dispatch(() => job.AddReport(r));
                     }
                 }
             }
@@ -495,15 +508,7 @@ namespace Visor
 
         private string GetCurrentFilePath()
         {
-            try
-            {
-                var dte = GetGlobalService(typeof(DTE)) as DTE;
-                return dte.ActiveDocument.FullName;
-            }
-            catch (Exception e)
-            {
-                throw new Exception("There is no active document.", e);
-            }
+            return FileHandler.GetActiveDocumentPath();
         }
 
         private void Dispatch(Action action)

@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Visor.Options;
 
 namespace Visor.ReportRunner
 {
@@ -33,14 +34,15 @@ namespace Visor.ReportRunner
             InitializeComponent();
         }
 
-        public void AddBatchJob(string file)
+        public void AddBatchJob(string file, SymDirectory directory)
         {
             _jobs.Add(new BatchJob
                 {
                     FileName = file,
                     Sequence = 0,
                     RunTime = DateTime.Now,
-                    Status = "Initializing"
+                    Status = "Initializing",
+                    Directory = directory
                 });
         }
 
@@ -62,6 +64,27 @@ namespace Visor.ReportRunner
         public BatchJob GetJob(int sequence)
         {
             return _jobs.Last(x => x.Sequence == sequence);
+        }
+
+        private void OpenReport(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var report = (sender as MenuItem).CommandParameter as Report;
+                report.Open();
+            }
+            catch
+            {}
+        }
+
+        private void RunFileMaintenance(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var report = (sender as MenuItem).CommandParameter as Report;
+            }
+            catch
+            { }
         }
     }
 }

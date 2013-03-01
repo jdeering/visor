@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using Visor.Annotations;
+using Visor.Options;
 
 namespace Visor.ReportRunner
 {
@@ -14,6 +15,8 @@ namespace Visor.ReportRunner
         private string _status;
         private string _fileName;
         private ReportList _reports;
+
+        public SymDirectory Directory { get; set; }
 
         public int Sequence
         {
@@ -63,12 +66,12 @@ namespace Visor.ReportRunner
             PropertyChangedEventHandler handler = PropertyChanged;
             if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
         }
-    }
 
-    public class Report
-    {
-        public string Title { get; set; }
-        public int Sequence { get; set; }
+        public void AddReport(Report report)
+        {
+            report.Parent = this;
+            Reports.Add(report);
+        }
     }
 
     public class BatchJobs : ObservableCollection<BatchJob>

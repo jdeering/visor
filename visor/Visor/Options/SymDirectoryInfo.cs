@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Symitar;
 using Visor.Net.Ftp;
+using Visor.ReportRunner;
 
 namespace Visor.Options
 {
@@ -170,6 +171,7 @@ namespace Visor.Options
             {
                 case ".rg": return FileType.RepGen;
                 case ".hlp": return FileType.Help;
+                case ".rpt": return FileType.Report;
                 default: return FileType.Letter;
             }
         }
@@ -185,9 +187,29 @@ namespace Visor.Options
                 JobCompletionHandler);
         }
 
-        public IEnumerable<int> GetReportSequences(int batchOutputSequence)
+        public List<int> GetReportSequences(int batchOutputSequence)
         {
             return _session.GetReportSequences(batchOutputSequence);
+        }
+
+        public List<Report> GetReports(int batchOutputSequence)
+        {
+            var sequences = _session.GetReportSequences(batchOutputSequence);
+            var titles = _session.GetReportTitles(batchOutputSequence);
+
+            var reports = new List<Report>();
+
+            for (var i = 0; i < sequences.Count(); i++)
+            {
+                reports.Add(new Report { Sequence = sequences[i], Title = titles[i] });
+            }
+
+            return reports;
+        }
+
+        public string GetReportTitle(int sequence)
+        {
+            return "";
         }
 
         private string GetPromptValue(string prompt)

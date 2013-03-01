@@ -126,7 +126,7 @@ namespace Visor.LanguageService
 
             setupSection.Rule
                 = ToTerm("setup") + ToTerm("end")
-                | ToTerm("define") + statements + ToTerm("end");
+                | ToTerm("setup") + statements + ToTerm("end");
 
             selectSection.Rule
                 = ToTerm("select") + ToTerm("end")

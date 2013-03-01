@@ -226,7 +226,8 @@ namespace Visor.LanguageService
                 | ToTerm("while") + expression + block
                 | ToTerm("for") + ToTerm("each") + forEachHeader + block
                 | ToTerm("for") + forHeader + block
-                | ToTerm("if") + expression + ToTerm("then") + block;
+                | ToTerm("if") + expression + ToTerm("then") + block
+                | ToTerm("else") + block;
 
             parenExpression.Rule = ToTerm("(") + expression + ")";
 

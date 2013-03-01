@@ -16,8 +16,8 @@ Visor is a Microsoft Visual Studio (2012) Extension. It seeks to provide a suita
 Quick start options available:
 
 * Clone the repo: `git clone git://github.com/jdeering/visor.git`.
-* <s>Download from the [Visual Studio Extension Gallery](http://visualstudiogallery.msdn.microsoft.com/).</s> Not yet available
-* <s>Install using Visual Studio's extension manager.</s>
+* Download from the [Visual Studio Extension Gallery](http://visualstudiogallery.msdn.microsoft.com/d06ed59f-1e5f-4c16-9fbc-92586daa6273).
+* Install using Visual Studio's extension manager.
 
 
 

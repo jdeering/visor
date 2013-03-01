@@ -247,7 +247,8 @@ namespace Visor.LanguageService
             printStatement.Rule
                 = ToTerm("print") + addExpression
                 | ToTerm("col") + "=" + factor + addExpression
-                | ToTerm("newline");
+                | ToTerm("newline")
+                | ToTerm("newpage");
 
             arguments.Rule
                 = expression + "," + arguments

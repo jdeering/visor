@@ -36,6 +36,7 @@ namespace Visor.LanguageService
             NonTerminal assignments = new NonTerminal("assignments");
             NonTerminal arrayParen = new NonTerminal("array-paren");
             NonTerminal arraySize = new NonTerminal("array-size");
+            NonTerminal arrayIndex = new NonTerminal("array-index");
             NonTerminal parenParameters = new NonTerminal("paren-parameters");
             NonTerminal parameters = new NonTerminal("parameters");
             NonTerminal variableType = new NonTerminal("variable-type");
@@ -194,6 +195,9 @@ namespace Visor.LanguageService
                 = arraySize + "," + number
                 | number;
 
+            arrayIndex.Rule
+                = ToTerm("(") + parameters + ")";
+
             parameters.Rule
                 = parameters + "," + factor
                 | factor;
@@ -252,7 +256,7 @@ namespace Visor.LanguageService
                 | "(" + arguments + ")";
 
             assignExpression.Rule
-                = identifier + ToTerm("=") + expression;
+                = identifier + (Empty | arrayIndex) + ToTerm("=") + expression;
 
             expression.Rule
                 = relationalExpression + booleanOperator + expression
@@ -294,7 +298,7 @@ namespace Visor.LanguageService
 
             factor.Rule
                 = databaseField
-                | identifier
+                | identifier + (Empty | arrayIndex)
                 | literal
                 | parenExpression
                 | functionCall;

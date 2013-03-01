@@ -139,9 +139,7 @@ namespace Visor
             var menuCommandID = new CommandID(GuidList.VisorCmdSet, (int)commandId);
             var menuItem = new OleMenuCommand(commandHandler, menuCommandID);
 
-            if (commandId == PkgCmdIDList.InstallSpecfile || commandId == PkgCmdIDList.RunReport)
-                menuItem.BeforeQueryStatus += CommandRequiresLogin;
-            else if(commandId != PkgCmdIDList.SymDirectorySelect && commandId != PkgCmdIDList.SymDirectorySelectOptions)
+            if(commandId != PkgCmdIDList.SymDirectorySelect && commandId != PkgCmdIDList.SymDirectorySelectOptions)
                 menuItem.BeforeQueryStatus += CommandVisibility;
 
             var menuCommandService = GetService(typeof(IMenuCommandService)) as OleMenuCommandService;

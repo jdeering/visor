@@ -94,7 +94,7 @@ namespace Visor.LanguageService
             this.Root = program;
 
             program.Rule 
-                = programTypeWords + targetStatement + defineSection + setupSection + selectSection + printSection + procedureDefinitions
+                = programTypeWords + targetStatement + defineSection + setupSection + (selectSection | Empty) + printSection + procedureDefinitions
                 | includeStatement;
 
             includeStatement.Rule = ToTerm("#include") + character;

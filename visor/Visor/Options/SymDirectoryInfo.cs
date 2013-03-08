@@ -24,7 +24,7 @@ namespace Visor.Options
 
         public bool LoggedIn
         {
-            get { return _session.LoggedIn; }
+            get { return _session != null && _session.LoggedIn; }
         }
 
         public SymDirectory()

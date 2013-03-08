@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
   <Metadata>
-    <Identity Id="b06dd064-a1ca-4c34-8411-7ba23013c31f" Version="1.3.3" Language="en-US" Publisher="jdeering" />
+    <Identity Id="b06dd064-a1ca-4c34-8411-7ba23013c31f" Version="1.3.4" Language="en-US" Publisher="jdeering" />
     <DisplayName>Visor</DisplayName>
     <Description>Visual Studio for Repgen</Description>
     <MoreInfo>https://github.com/jdeering/visor</MoreInfo>

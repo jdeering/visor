@@ -8,6 +8,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{30900C
 		.nuget\packages.config = .nuget\packages.config
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Visor.Templates", "Visor.Templates\Visor.Templates.csproj", "{57EBABA4-4AFF-4D6D-B586-E61F3DF0538C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,6 +20,10 @@ Global
 		{BE899615-948C-4334-A02B-611473955022}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BE899615-948C-4334-A02B-611473955022}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BE899615-948C-4334-A02B-611473955022}.Release|Any CPU.Build.0 = Release|Any CPU
+		{57EBABA4-4AFF-4D6D-B586-E61F3DF0538C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{57EBABA4-4AFF-4D6D-B586-E61F3DF0538C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{57EBABA4-4AFF-4D6D-B586-E61F3DF0538C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{57EBABA4-4AFF-4D6D-B586-E61F3DF0538C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

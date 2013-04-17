@@ -285,11 +285,6 @@ namespace Visor
             {
                 try
                 {
-                    if (!_currentDirectory.LoggedIn)
-                    {
-                        throw new InvalidOperationException("Not logged in");
-                    }
-
                     // Upload the current file and run the install on success
                     _currentDirectory.UploadFile(GetCurrentFilePath(), RunInstall, FtpError);
                 }
@@ -339,11 +334,6 @@ namespace Visor
             {
                 try
                 {
-                    if (!_currentDirectory.LoggedIn)
-                    {
-                        throw new InvalidOperationException("Not logged in");
-                    }
-
                     // Upload the current file and run the install on success
                     _currentDirectory.UploadFile(GetCurrentFilePath(), RunReport, FtpError);
                 }

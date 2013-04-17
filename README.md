@@ -5,7 +5,8 @@ Visual Studio Extension for Repgen
 Visor is a Microsoft Visual Studio (2012) Extension. It seeks to provide a suitable environment for developing RepGen programs for use in Symitar while allowing the use of other extensions provided for Visual Studio. Basic features include:
 
 * File upload/download via FTP
-* File read/write via RAS
+* Report running
+* Specfile install
 * Syntax highlighting
 * Code completion
 

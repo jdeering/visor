@@ -12,6 +12,7 @@ namespace Visor
         public const string VisorOptionsPageString = "e8f10dd4-f947-46a1-a653-29304c9fe554";
         public const string VisorProjectFactoryString = "46abf810-899a-485a-bb1a-f079d80a5395";
         public const string VisorReportRunnerWindowString = "cd201cbb-2fda-41a2-8b02-159a0e532fcb";
+        public const string VisorReportPromptWindowString = "2118e1b3-621f-47db-8638-5c4414212ae0";
 
         public static readonly Guid VisorPackage = new Guid(VisorPackageString);
         public static readonly Guid VisorCmdSet = new Guid(VisorCmdSetString);
@@ -19,5 +20,6 @@ namespace Visor
         public static readonly Guid VisorOptions = new Guid(VisorOptionsPageString);
         public static readonly Guid VisorProjectFactory = new Guid(VisorProjectFactoryString);
         public static readonly Guid VisorReportRunnerWindow = new Guid(VisorReportRunnerWindowString);
+        public static readonly Guid VisorReportPromptWindow = new Guid(VisorReportPromptWindowString);
     };
 }

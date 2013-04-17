@@ -197,7 +197,12 @@
     <Compile Include="Project\ProjectFactory.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="ReportRunner\BatchJob.cs" />
+    <Compile Include="ReportRunner\PromptType.cs" />
+    <Compile Include="ReportRunner\ReportPromptDialog.xaml.cs">
+      <DependentUpon>ReportPromptDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ReportRunner\Report.cs" />
+    <Compile Include="ReportRunner\ReportPrompt.cs" />
     <Compile Include="ReportRunner\ReportRunnerControl.xaml.cs">
       <DependentUpon>ReportRunnerControl.xaml</DependentUpon>
     </Compile>
@@ -289,6 +294,10 @@
     <Content Include="Resources\Package.ico" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="ReportRunner\ReportPromptDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="ReportRunner\ReportRunnerControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

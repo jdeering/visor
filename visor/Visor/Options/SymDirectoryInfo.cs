@@ -75,6 +75,12 @@ namespace Visor.Options
             }
         }
 
+        private void Reset()
+        {
+            Disconnect();
+            Connect();
+        }
+
         public bool FileExists(string path)
         {
             FtpRequest request = new FtpRequest(Server.Host, Server.FtpPort, Server.AixUsername, Server.AixPassword);
@@ -123,10 +129,7 @@ namespace Visor.Options
             try
             {
                 if (!_session.LoggedIn)
-                {
-                    Disconnect();
-                    Connect();
-                }
+                    Reset();
 
                 result = _session.FileInstall(file);
             }
@@ -178,13 +181,17 @@ namespace Visor.Options
             }
         }
 
-        public void Run(string fileName, SymSession.FileRunStatus ProgressHandler, RunWorkerCompletedEventHandler JobCompletionHandler)
+        public void Run(string fileName, List<string> promptAnswers, SymSession.FileRunStatus ProgressHandler, RunWorkerCompletedEventHandler JobCompletionHandler)
         {
             var file = new Symitar.File() { Name = fileName, Type = FileType.RepGen };
+            var currPrompt = 0;
+
+            if (!_session.LoggedIn)
+                Reset();
 
             _session.FileRun(file,
                 ProgressHandler, 
-                GetPromptValue, 
+                (prompt) => currPrompt < promptAnswers.Count ? promptAnswers[currPrompt++] : "", 
                 3,
                 JobCompletionHandler);
         }
@@ -196,6 +203,9 @@ namespace Visor.Options
 
         public List<Report> GetReports(int batchOutputSequence)
         {
+            if (!_session.LoggedIn)
+                Reset();
+
             var sequences = _session.GetReportSequences(batchOutputSequence);
             var titles = _session.GetReportTitles(batchOutputSequence);
 
@@ -210,11 +220,6 @@ namespace Visor.Options
         }
 
         public string GetReportTitle(int sequence)
-        {
-            return "";
-        }
-
-        private string GetPromptValue(string prompt)
         {
             return "";
         }

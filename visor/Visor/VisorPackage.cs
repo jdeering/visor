@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.Design;
@@ -7,6 +8,8 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
+using System.Windows;
 using EnvDTE;
 using Microsoft.Internal.VisualStudio.PlatformUI;
 using Microsoft.VisualStudio;
@@ -82,6 +85,7 @@ namespace Visor
     // Tool windows
     // -------------------------------------------------------------------------------
     [ProvideToolWindow(typeof(ReportToolWindow), Style = VsDockStyle.Tabbed, Window = GuidList.VisorReportRunnerWindowString)]
+    //[ProvideToolWindow(typeof(ReportPromptDialog), Style = VsDockStyle.AlwaysFloat, Window = GuidList.VisorReportPromptWindowString)]
     public sealed class VisorPackage : IronyPackage
     {
         private string _comboSelection;
@@ -89,6 +93,7 @@ namespace Visor
         private List<SymDirectory> _directories;
 
         public ToolWindowPane ReportRunnerToolWindow;
+        private List<string> _answers;
 
         /// <summary>
         /// Default constructor of the package.
@@ -330,6 +335,29 @@ namespace Visor
         {
             var worker = new BackgroundWorker();
 
+            _answers = new List<string>();
+
+            var currentFile = GetCurrentFilePath();
+
+            var prompts = GetPrompts(currentFile);
+
+            if (prompts.Any())
+            {
+                var promptDialog = new ReportPromptDialog(prompts);
+                promptDialog.SizeToContent = SizeToContent.WidthAndHeight;
+                promptDialog.Title = String.Format("{0} Prompts", Path.GetFileNameWithoutExtension(currentFile));
+                var dialogResult = promptDialog.ShowModal();
+
+                if (dialogResult.HasValue && dialogResult.Value)
+                {
+                    _answers = promptDialog.Answers;
+                }
+                else
+                {
+                    return;
+                }
+            }
+
             worker.DoWork += (o, args) =>
             {
                 try
@@ -346,6 +374,52 @@ namespace Visor
             worker.RunWorkerAsync();
         }
 
+        private List<ReportPrompt> GetPrompts(string path)
+        {
+            var result = new List<ReportPrompt>();
+
+            var lines = System.IO.File.ReadAllLines(path);
+
+            var dateReadExpression = new Regex(@"dateread\s*\((?<prompts>[^\)]*)\)", RegexOptions.IgnoreCase);
+            var promptExpression = new Regex(@"read\s*\((?<prompts>[^\)]*)\)", RegexOptions.IgnoreCase);
+
+            foreach (var line in lines)
+            {
+                var match = dateReadExpression.Match(line);
+                if (match.Success)
+                {
+                    string text = GetFullPromptText(match.Groups["prompts"].Captures);
+                    result.Add(new ReportPrompt { Type = PromptType.Date, Text = text.Trim() });
+                }
+                else
+                {
+                    match = promptExpression.Match(line);
+                    if (match.Success)
+                    {
+                        string text = GetFullPromptText(match.Groups["prompts"].Captures);
+                        result.Add(new ReportPrompt { Type = PromptType.Character, Text = text });
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        private string GetFullPromptText(CaptureCollection captures)
+        {
+            var promptList = new Regex(@"\""(?<prompt>[^\""]*)\""\s*,?\s*", RegexOptions.IgnoreCase);
+            foreach (Capture c in captures)
+            {
+                var promptMatches = promptList.Matches(c.Value);
+
+                var promptTextArray = promptMatches.Cast<Match>()
+                                                   .SelectMany(m => m.Groups["prompt"].Captures.Cast<Capture>())
+                                                   .Select(p => p.Value).ToArray();
+                return String.Join("\n", promptTextArray);
+            }
+            return "";
+        }
+
         private void RunReport(string fileName)
         {
             ShowReportWindow();
@@ -354,7 +428,7 @@ namespace Visor
             try
             {
                 _currentDirectory.Connect();
-                _currentDirectory.Run(fileName, UpdateReportStatus, ReportCompleted);
+                _currentDirectory.Run(fileName, _answers, UpdateReportStatus, ReportCompleted);
             }
             catch (Exception e)
             {
@@ -363,7 +437,7 @@ namespace Visor
             }
             finally
             {
-                _currentDirectory.Disconnect();
+                _answers = new List<string>();
             }
         }
 
@@ -393,6 +467,8 @@ namespace Visor
         {
             if (args.Error != null)
             {
+                var fileName = (string)((object[])args.Result)[0];
+                UpdateReportStatus(SymSession.RunState.Failed, fileName);
                 ErrorMessage("Run Report Failed!", args.Error.Message);
             }
             else if (args.Cancelled)
@@ -420,6 +496,8 @@ namespace Visor
                     }
                 }
             }
+
+            _currentDirectory.Disconnect();
         }
 
         private void ShowReportWindow()

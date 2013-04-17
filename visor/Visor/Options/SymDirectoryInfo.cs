@@ -77,10 +77,12 @@ namespace Visor.Options
 
         public bool FileExists(string path)
         {
-            FileType type = GetSymitarFileType(path);
-            string fileName = GetSymitarFileName(path);
+            FtpRequest request = new FtpRequest(Server.Host, Server.FtpPort, Server.AixUsername, Server.AixPassword);
 
-            return _session.FileExists(fileName, type);
+            var remoteFolder = Utilities.ContainingFolder(Institution, GetSymitarFileType(path));
+            var remotePath = String.Format("{0}/{1}", remoteFolder, Path.GetFileNameWithoutExtension(path));
+
+            return request.FileExists(remotePath);
         }
 
         public void UploadFile(string path, Action<string> SuccessCallback, Action<FtpException> ErrorCallback)

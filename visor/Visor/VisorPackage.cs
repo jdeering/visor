@@ -206,10 +206,7 @@ namespace Visor
                     var host = _comboSelection.Substring(openParen + 1, length);
                     var institution = int.Parse(_comboSelection.Split(' ')[1]);
 
-                    if (_currentDirectory != null) _currentDirectory.Disconnect();
-
                     _currentDirectory = _directories.Single(x => x.Institution == institution && x.Server.Host == host);
-                    StartSessionAsync();
                 }
                 else if (output != IntPtr.Zero)
                 {
@@ -222,24 +219,8 @@ namespace Visor
             if (_directories.Count > 0)
             {
                 _currentDirectory = _directories.First();
-                StartSessionAsync();
                 _comboSelection = _currentDirectory.ToString();
             }
-        }
-
-        private void StartSessionAsync()
-        {
-            System.Threading.ThreadPool.QueueUserWorkItem(delegate
-                {
-                    try
-                    {
-                        _currentDirectory.Connect();
-                    }
-                    catch (Exception e)
-                    {
-                        ErrorMessage(String.Format("Error logging into {0}", _currentDirectory), e.Message);
-                    }
-                }, null);
         }
 
         private void LoadOptions()
@@ -323,7 +304,19 @@ namespace Visor
 
         private void RunInstall(string fileName)
         {
-            _currentDirectory.Install(GetCurrentFilePath(), InstallSuccess, InstallFail);
+            try
+            {
+                _currentDirectory.Connect();
+                _currentDirectory.Install(GetCurrentFilePath(), InstallSuccess, InstallFail);
+            }
+            catch (Exception e)
+            {
+                ErrorMessage("Error Installing Specfile!", e.Message);
+            }
+            finally
+            {
+                _currentDirectory.Disconnect();
+            }
         }
 
         private void InstallSuccess(string fileName, int installSize)
@@ -367,7 +360,21 @@ namespace Visor
         {
             ShowReportWindow();
             Dispatch(() => ((ReportRunnerControl)ReportRunnerToolWindow.Content).AddBatchJob(fileName, _currentDirectory));
-            _currentDirectory.Run(fileName, UpdateReportStatus, ReportCompleted);
+
+            try
+            {
+                _currentDirectory.Connect();
+                _currentDirectory.Run(fileName, UpdateReportStatus, ReportCompleted);
+            }
+            catch (Exception e)
+            {
+                Dispatch(() => ((ReportRunnerControl)ReportRunnerToolWindow.Content).RemoveBatchJob());
+                ErrorMessage("Error Running Report!", e.Message);
+            }
+            finally
+            {
+                _currentDirectory.Disconnect();
+            }
         }
 
         private void UpdateReportStatus(SymSession.RunState state, object data)

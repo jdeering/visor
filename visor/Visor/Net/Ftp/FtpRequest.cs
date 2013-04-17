@@ -109,6 +109,16 @@ namespace Visor.Net.Ftp
             }
             SuccessCallback(Path.GetFileNameWithoutExtension(destination));
         }
+
+        /*
+         * FILE EXISTS CHECK
+         * 
+         */
+        public bool FileExists(string path)
+        {
+            FtpClient client = new FtpClient(_connectionInformation, _login);
+            return client.FileExists(path);
+        }
     }
 
     public class FtpException : Exception

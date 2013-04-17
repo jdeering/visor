@@ -46,6 +46,11 @@ namespace Visor.ReportRunner
                 });
         }
 
+        public void RemoveBatchJob()
+        {
+            _jobs.RemoveAt(_jobs.Count-1);
+        }
+
         public void SetSequence(int sequence)
         {
             _jobs.Last(x => x.Sequence == 0).Sequence = sequence;

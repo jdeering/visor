@@ -389,7 +389,8 @@ namespace Visor
                 if (match.Success)
                 {
                     string text = GetFullPromptText(match.Groups["prompts"].Captures);
-                    result.Add(new ReportPrompt { Type = PromptType.Date, Text = text.Trim() });
+                    if (!string.IsNullOrEmpty(text))
+                        result.Add(new ReportPrompt { Type = PromptType.Date, Text = text.Trim() });
                 }
                 else
                 {
@@ -397,7 +398,8 @@ namespace Visor
                     if (match.Success)
                     {
                         string text = GetFullPromptText(match.Groups["prompts"].Captures);
-                        result.Add(new ReportPrompt { Type = PromptType.Character, Text = text });
+                        if(!string.IsNullOrEmpty(text))
+                            result.Add(new ReportPrompt { Type = PromptType.Character, Text = text });
                     }
                 }
             }

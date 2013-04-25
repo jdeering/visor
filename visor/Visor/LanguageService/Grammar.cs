@@ -45,6 +45,8 @@ namespace Visor.LanguageService
             NonTerminal statement = new NonTerminal("statement");
             NonTerminal parenExpression = new NonTerminal("paren-expression");
             NonTerminal forHeader = new NonTerminal("for-header");
+            NonTerminal forRecordHeader = new NonTerminal("for-record");
+            NonTerminal forRecordWithHeader = new NonTerminal("for-record-with");
             NonTerminal forEachHeader = new NonTerminal("foreach-header");
             NonTerminal semiStatement = new NonTerminal("semi-statement");
             NonTerminal arguments = new NonTerminal("arguments");
@@ -67,6 +69,7 @@ namespace Visor.LanguageService
             NonTerminal procedureHeader = new NonTerminal("procedure-header");
             NonTerminal procedureCall = new NonTerminal("procedure-call");
             NonTerminal printStatement = new NonTerminal("print-statement");
+            NonTerminal printAlign = new NonTerminal("print-align");
 
             NonTerminal programType = new NonTerminal("program-type");
             NonTerminal programTypeWords = new NonTerminal("program-typedef");
@@ -93,8 +96,8 @@ namespace Visor.LanguageService
             #region Place Rules Here
             this.Root = program;
 
-            program.Rule 
-                = programTypeWords + targetStatement + defineSection + setupSection + (selectSection | Empty) + printSection + procedureDefinitions
+            program.Rule
+                = programTypeWords + targetStatement + defineSection + setupSection + (selectSection | Empty) + (sortSection | Empty) + printSection + procedureDefinitions
                 | includeStatement;
 
             includeStatement.Rule = ToTerm("#include") + character;
@@ -210,7 +213,8 @@ namespace Visor.LanguageService
                 | "date"
                 | "rate"
                 | "float"
-                | "character";
+                | "character"
+                | "money";
 
             block.Rule
                 = ToTerm("do") + "end"
@@ -226,15 +230,20 @@ namespace Visor.LanguageService
                 | ToTerm("while") + expression + block
                 | ToTerm("for") + ToTerm("each") + forEachHeader + block
                 | ToTerm("for") + forHeader + block
+                | ToTerm("for") + forRecordHeader + block
+                | ToTerm("for") + forRecordWithHeader + block
                 | ToTerm("if") + expression + ToTerm("then") + block
                 | ToTerm("else") + block;
 
             parenExpression.Rule = ToTerm("(") + expression + ")";
 
-            forHeader.Rule = identifier + "=" + factor + "to" + factor
-                | identifier + "=" + factor + "to" + factor + "by" + factor;
+            forHeader.Rule 
+                = identifier + "=" + factor + "to" + factor + (("by" + factor) | Empty);
 
             forEachHeader.Rule = databaseRecord + "with" + expression;
+
+            forRecordHeader.Rule = databaseRecord + factor;
+            forRecordWithHeader.Rule = databaseRecord + "with" + identifier + factor;
 
             semiStatement.Rule
                 = assignExpression
@@ -246,9 +255,14 @@ namespace Visor.LanguageService
 
             printStatement.Rule
                 = ToTerm("print") + addExpression
-                | ToTerm("col") + "=" + factor + addExpression
+                | ToTerm("col") + "=" + factor + printAlign + addExpression
                 | ToTerm("newline")
                 | ToTerm("newpage");
+
+            printAlign.Rule
+                = ToTerm("left")
+                  | ToTerm("right")
+                  | Empty;
 
             arguments.Rule
                 = expression + "," + arguments

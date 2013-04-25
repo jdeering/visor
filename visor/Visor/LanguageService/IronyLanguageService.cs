@@ -77,96 +77,99 @@ namespace Visor.LanguageService
         {
             Debug.Print("ParseSource at ({0}:{1}), reason {2}", req.Line, req.Col, req.Reason);
             var source = (Source)GetSource(req.FileName);
-
             var scope = new AuthoringScope(source);
 
-            switch (req.Reason)
+            try
             {
-                case ParseReason.Check:
-                    // This is where you perform your syntax highlighting.
-                    // Parse entire source as given in req.Text.
-                    // Store results in the AuthoringScope object.
-                    var node = _parser.Parse(req.Text, req.FileName).Root;
-                    source.ParseResult = node;
+                switch (req.Reason)
+                {
+                    case ParseReason.Check:
+                        // This is where you perform your syntax highlighting.
+                        // Parse entire source as given in req.Text.
+                        // Store results in the AuthoringScope object.
+                        var node = _parser.Parse(req.Text, req.FileName).Root;
+                        source.ParseResult = node;
 
-                    // Used for brace matching.
-                    var braces = _parser.Context.OpenBraces;
-                    foreach (var brace in braces)
-                    {
-                        var openBrace = new TextSpan
+                        // Used for brace matching.
+                        var braces = _parser.Context.OpenBraces;
+                        foreach (var brace in braces)
+                        {
+                            var openBrace = new TextSpan
+                                {
+                                    iStartLine = brace.Location.Line,
+                                    iStartIndex = brace.Location.Column,
+                                    iEndLine = brace.Location.Line,
+                                    iEndIndex = brace.Location.Column + brace.Length
+                                };
+
+                            if (brace.OtherBrace == null) continue;
+
+                            var closeBrace = new TextSpan
+                                {
+                                    iStartLine = brace.OtherBrace.Location.Line,
+                                    iStartIndex = brace.OtherBrace.Location.Column,
+                                    iEndLine = brace.OtherBrace.Location.Line,
+                                    iEndIndex = brace.OtherBrace.Location.Column + brace.OtherBrace.Length
+                                };
+
+                            if (source.Braces == null)
                             {
-                                iStartLine = brace.Location.Line,
-                                iStartIndex = brace.Location.Column,
-                                iEndLine = brace.Location.Line,
-                                iEndIndex = brace.Location.Column + brace.Length
-                            };
+                                source.Braces = new List<TextSpan[]>();
+                            }
+                            source.Braces.Add(new TextSpan[2] {openBrace, closeBrace});
+                        }
 
-                        if (brace.OtherBrace == null) continue;
-
-                        var closeBrace = new TextSpan
+                        if (_parser.Context.CurrentParseTree.ParserMessages.Count > 0)
+                        {
+                            foreach (var error in _parser.Context.CurrentParseTree.ParserMessages)
                             {
-                                iStartLine = brace.OtherBrace.Location.Line,
-                                iStartIndex = brace.OtherBrace.Location.Column,
-                                iEndLine = brace.OtherBrace.Location.Line,
-                                iEndIndex = brace.OtherBrace.Location.Column + brace.OtherBrace.Length
-                            };
-
-                        if (source.Braces == null)
-                        {
-                            source.Braces = new List<TextSpan[]>();
+                                var span = new TextSpan();
+                                span.iStartLine = span.iEndLine = error.Location.Line;
+                                span.iStartIndex = error.Location.Column;
+                                span.iEndIndex = error.Location.Position;
+                                req.Sink.AddError(req.FileName, error.Message, span, Severity.Error);
+                            }
                         }
-                        source.Braces.Add(new TextSpan[2] { openBrace, closeBrace });
-                    }
+                        break;
 
-                    if (_parser.Context.CurrentParseTree.ParserMessages.Count > 0)
-                    {
-                        foreach (var error in _parser.Context.CurrentParseTree.ParserMessages)
+                    case ParseReason.DisplayMemberList:
+                        // Parse the line specified in req.Line for the two
+                        // tokens just before req.Col to obtain the identifier
+                        // and the member connector symbol.
+
+                        // Examine existing parse tree for members of the identifer
+                        // and return a list of members in your version of the
+                        // Declarations class as stored in the AuthoringScope
+                        // object.
+                        break;
+
+                    case ParseReason.MethodTip:
+                        // Parse the line specified in req.Line for the token
+                        // just before req.Col to obtain the name of the method
+                        // being entered.
+
+                        // Examine the existing parse tree for all method signatures
+                        // with the same name and return a list of those signatures
+                        // in your version of the Methods class as stored in the
+                        // AuthoringScope object.
+                        break;
+
+                    case ParseReason.HighlightBraces:
+                    case ParseReason.MemberSelectAndHighlightBraces:
+                        if (source.Braces != null)
                         {
-                            var span = new TextSpan();
-                            span.iStartLine = span.iEndLine = error.Location.Line;
-                            span.iStartIndex = error.Location.Column;
-                            span.iEndIndex = error.Location.Position;
-                            req.Sink.AddError(req.FileName, error.Message, span, Severity.Error);
+                            foreach (TextSpan[] brace in source.Braces)
+                            {
+                                if (brace.Length == 2)
+                                    req.Sink.MatchPair(brace[0], brace[1], 1);
+                                else if (brace.Length >= 3)
+                                    req.Sink.MatchTriple(brace[0], brace[1], brace[2], 1);
+                            }
                         }
-                    }
-                    break;
-
-                case ParseReason.DisplayMemberList:
-                    // Parse the line specified in req.Line for the two
-                    // tokens just before req.Col to obtain the identifier
-                    // and the member connector symbol.
-
-                    // Examine existing parse tree for members of the identifer
-                    // and return a list of members in your version of the
-                    // Declarations class as stored in the AuthoringScope
-                    // object.
-                    break;
-
-                case ParseReason.MethodTip:
-                    // Parse the line specified in req.Line for the token
-                    // just before req.Col to obtain the name of the method
-                    // being entered.
-
-                    // Examine the existing parse tree for all method signatures
-                    // with the same name and return a list of those signatures
-                    // in your version of the Methods class as stored in the
-                    // AuthoringScope object.
-                    break;
-
-                case ParseReason.HighlightBraces:
-                case ParseReason.MemberSelectAndHighlightBraces:
-                    if (source.Braces != null)
-                    {
-                        foreach (TextSpan[] brace in source.Braces)
-                        {
-                            if (brace.Length == 2)
-                                req.Sink.MatchPair(brace[0], brace[1], 1);
-                            else if (brace.Length >= 3)
-                                req.Sink.MatchTriple(brace[0], brace[1], brace[2], 1);
-                        }
-                    }
-                    break;
+                        break;
+                }
             }
+            catch{}// eat exceptions as there isn't a reliable way to handle them
 
             return scope;
         }

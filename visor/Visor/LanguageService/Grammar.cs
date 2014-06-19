@@ -24,7 +24,7 @@ namespace Visor.LanguageService
             StringLiteral date = new StringLiteral("date", "'");
             StringLiteral character = new StringLiteral("character", "\"");
 
-            IdentifierTerminal identifier = new IdentifierTerminal("identifier", "@");
+            IdentifierTerminal identifier = new IdentifierTerminal("identifier", "@", "@#");
             #endregion
 
             #region Declare NonTerminals Here

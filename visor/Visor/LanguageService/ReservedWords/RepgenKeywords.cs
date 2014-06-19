@@ -30,8 +30,7 @@ namespace Visor.LanguageService.ReservedWords
                     if (string.IsNullOrEmpty(line)) continue;
 
                     var tokens = line.Trim().Split('|');
-
-                    _list.Add(tokens[0].ToLower());
+                    _list.Add(tokens[0].Trim().ToLower());
                 }
             }
         }

@@ -1,12 +1,14 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Visor", "Visor\Visor.csproj", "{BE899615-948C-4334-A02B-611473955022}"
-EndProject
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30723.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{30900C4C-BAA3-40B6-AEAD-22FA64CE6E05}"
 	ProjectSection(SolutionItems) = preProject
 		.nuget\packages.config = .nuget\packages.config
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Visor", "Visor\Visor.csproj", "{BE899615-948C-4334-A02B-611473955022}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Visor.Templates", "Visor.Templates\Visor.Templates.csproj", "{57EBABA4-4AFF-4D6D-B586-E61F3DF0538C}"
 EndProject

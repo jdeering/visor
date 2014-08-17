@@ -1,15 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
   <Metadata>
-    <Identity Id="b06dd064-a1ca-4c34-8411-7ba23013c31f" Version="1.4.4" Language="en-US" Publisher="jdeering" />
+    <Identity Id="b06dd064-a1ca-4c34-8411-7ba23013c31f" Version="2.0.0" Language="en-US" Publisher="jdeering" />
     <DisplayName>Visor</DisplayName>
     <Description>Visual Studio for Repgen</Description>
     <MoreInfo>https://github.com/jdeering/visor</MoreInfo>
   </Metadata>
   <Installation InstalledByMsi="false">
-    <InstallationTarget Id="Microsoft.VisualStudio.Pro" Version="[10.0,12.0)" />
-    <InstallationTarget Version="[10.0,12.0)" Id="Microsoft.VisualStudio.Ultimate" />
-    <InstallationTarget Version="[10.0,12.0)" Id="Microsoft.VisualStudio.Premium" />
+    <InstallationTarget Id="Microsoft.VisualStudio.Pro" Version="[10.0,13.0)" />
   </Installation>
   <Dependencies>
     <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="4.5" />

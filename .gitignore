@@ -1,7 +1,21 @@
-# git ignore file
+.DS_Store
 
-*.user
+# Ignore files created as a result
+# of the conversion
+_UpgradeReport_Files
+Backup
+UpgradeLog.*
+
+**/bin/*
+**/obj/*
 *.suo
+*.user
 *.DotSettings
-obj
-bin
+*.nuspec
+*.nupkg
+
+packages
+
+# Coverage results
+TestResult.xml
+results.xml

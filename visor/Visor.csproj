@@ -247,65 +247,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="bin\Release\ItemTemplates\Batch.zip">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="bin\Release\ItemTemplates\Demand.zip">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="bin\Release\ItemTemplates\Help.zip">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="bin\Release\ItemTemplates\HTML.zip">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="bin\Release\ItemTemplates\Letter.zip">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="bin\Release\ProjectTemplates\Basic.zip">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <ZipItem Include="ItemTemplates\Batch.zip">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </ZipItem>
-    <ZipItem Include="ItemTemplates\Demand.zip">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </ZipItem>
-    <ZipItem Include="ItemTemplates\Help.zip">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </ZipItem>
-    <ZipItem Include="ItemTemplates\HTML.zip">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </ZipItem>
-    <ZipItem Include="ItemTemplates\Letter.zip">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </ZipItem>
     <None Include="packages.config" />
-    <ZipItem Include="Project\Templates\ItemTemplate\Batch\Batch.rg" />
-    <ZipItem Include="Project\Templates\ItemTemplate\Demand\Demand.rg" />
-    <ZipItem Include="Project\Templates\ItemTemplate\Help\Help.hlp" />
-    <ZipItem Include="Project\Templates\ItemTemplate\Letter\Letter.ltr" />
-    <ZipItem Include="Project\Templates\ItemTemplate\HTML\HTMLPage.html" />
-    <ZipItem Include="Project\Templates\ItemTemplate\Batch\Batch.vstemplate" />
-    <ZipItem Include="Project\Templates\ItemTemplate\Demand\Demand.vstemplate" />
-    <ZipItem Include="Project\Templates\ItemTemplate\Help\Help.vstemplate" />
-    <ZipItem Include="Project\Templates\ItemTemplate\HTML\HTMLPage.vstemplate" />
-    <ZipItem Include="Project\Templates\ItemTemplate\Letter\Letter.vstemplate" />
-    <ZipProject Include="Project\Templates\ProjectTemplate\Basic\Basic.symproj">
-      <OutputSubPath>Visor\BasicProject</OutputSubPath>
-    </ZipProject>
-    <ZipProject Include="Project\Templates\ProjectTemplate\Basic\Basic.ico">
-      <OutputSubPath>Visor\BasicProject</OutputSubPath>
-    </ZipProject>
-    <ZipProject Include="ProjectTemplates\Basic.zip">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </ZipProject>
     <None Include="source.extension.vsixmanifest">
       <SubType>Designer</SubType>
     </None>

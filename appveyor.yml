@@ -21,6 +21,9 @@
     project: visor.sln
     verbosity: quiet
 
+  artifacts:
+    - path: Visor\bin\%CONFIGURATION%\*.vsix
+
 -
   branches:
     only:
@@ -28,7 +31,7 @@
 
   version: 2.0.1-beta
 
-  configuration: Debug
+  configuration: Release
 
   assembly_info:
     patch: true
@@ -42,7 +45,10 @@
 
   build:
     project: visor.sln
-    verbosity: minimal
+    verbosity: quiet
+
+  artifacts:
+    - path: Visor\bin\%CONFIGURATION%\*.vsix
 
 -
   branches:

@@ -1,5 +1,11 @@
 visor
 =====
+
+[![Build status](https://ci.appveyor.com/api/projects/status/ogvk387s3qxvoi6d?svg=true)](https://ci.appveyor.com/project/jdeering/visor)
+[![Coverage Status](https://img.shields.io/coveralls/jdeering/visor.svg)](https://coveralls.io/r/jdeering/visor)
+[![Coverity Scan](https://scan.coverity.com/projects/3917/badge.svg)](https://scan.coverity.com/projects/3917)
+
+
 Visual Studio Extension for Repgen
 -----
 Visor is a Microsoft Visual Studio (2012) Extension. It seeks to provide a suitable environment for developing RepGen programs for use in Symitar while allowing the use of other extensions provided for Visual Studio. Basic features include:

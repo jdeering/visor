@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<VSTemplate Version="3.0.0" Type="Item" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005" xmlns:sdk="http://schemas.microsoft.com/developer/vstemplate-sdkextension/2010">
+  <TemplateData>
+    <Name>Letter File</Name>
+    <Description>Creates a new Symitar Letter File</Description>
+    <ProjectType>Repgen</ProjectType>
+    <DefaultName>Letter.ltr</DefaultName>
+    <ProvideDefaultName>true</ProvideDefaultName>
+    <SortOrder>300</SortOrder>
+  </TemplateData>
+  <TemplateContent>
+    <ProjectItem ReplaceParameters="true" TargetFileName="$fileinputname$.ltr">Letter.ltr</ProjectItem>
+  </TemplateContent>
+</VSTemplate>

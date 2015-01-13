@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<VSTemplate Version="3.0.0" Type="Item" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005" xmlns:sdk="http://schemas.microsoft.com/developer/vstemplate-sdkextension/2010">
+  <TemplateData>
+    <Name>Batch RepGen</Name>
+    <Description>Creates a new RepGen source code file</Description>
+    <ProjectType>Repgen</ProjectType>
+    <DefaultName>Batch.rg</DefaultName>
+    <ProvideDefaultName>true</ProvideDefaultName>
+    <SortOrder>100</SortOrder>
+  </TemplateData>
+  <TemplateContent>
+    <ProjectItem ReplaceParameters="true" TargetFileName="$fileinputname$.rg">Batch.rg</ProjectItem>
+  </TemplateContent>
+</VSTemplate>

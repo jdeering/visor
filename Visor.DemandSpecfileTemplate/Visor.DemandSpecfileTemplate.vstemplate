@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<VSTemplate Version="3.0.0" Type="Item" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005" xmlns:sdk="http://schemas.microsoft.com/developer/vstemplate-sdkextension/2010">
+  <TemplateData>
+    <Name>On-Demand RepGen</Name>
+    <Description>Creates a new RepGen source code file</Description>
+    <ProjectType>Repgen</ProjectType>
+    <DefaultName>Program.rg</DefaultName>
+    <ProvideDefaultName>true</ProvideDefaultName>
+    <SortOrder>200</SortOrder>
+  </TemplateData>
+  <TemplateContent>
+    <ProjectItem ReplaceParameters="true" TargetFileName="$fileinputname$.rg">Demand.rg</ProjectItem>
+  </TemplateContent>
+</VSTemplate>

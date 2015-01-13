@@ -53,6 +53,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
+    <DeployExtension>False</DeployExtension>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -270,6 +271,21 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
+    <ZipItem Include="ItemTemplates\Batch.zip">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </ZipItem>
+    <ZipItem Include="ItemTemplates\Demand.zip">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </ZipItem>
+    <ZipItem Include="ItemTemplates\Help.zip">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </ZipItem>
+    <ZipItem Include="ItemTemplates\HTML.zip">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </ZipItem>
+    <ZipItem Include="ItemTemplates\Letter.zip">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </ZipItem>
     <None Include="packages.config" />
     <ZipItem Include="Project\Templates\ItemTemplate\Batch\Batch.rg" />
     <ZipItem Include="Project\Templates\ItemTemplate\Demand\Demand.rg" />
@@ -286,6 +302,9 @@
     </ZipProject>
     <ZipProject Include="Project\Templates\ProjectTemplate\Basic\Basic.ico">
       <OutputSubPath>Visor\BasicProject</OutputSubPath>
+    </ZipProject>
+    <ZipProject Include="ProjectTemplates\Basic.zip">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </ZipProject>
     <None Include="source.extension.vsixmanifest">
       <SubType>Designer</SubType>
@@ -320,9 +339,51 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Visor.BatchSpecfileTemplate\Visor.BatchSpecfileTemplate.csproj">
+      <Project>{7F940744-5F09-4D2B-AB6D-4F6326F72539}</Project>
+      <Name>Visor.BatchSpecfileTemplate</Name>
+      <VSIXSubPath>ItemTemplates</VSIXSubPath>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
+    </ProjectReference>
+    <ProjectReference Include="..\Visor.DemandSpecfileTemplate\Visor.DemandSpecfileTemplate.csproj">
+      <Project>{CBA8C71A-4838-4C6F-AF71-B9DD565A73A8}</Project>
+      <Name>Visor.DemandSpecfileTemplate</Name>
+      <VSIXSubPath>ItemTemplates</VSIXSubPath>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
+    </ProjectReference>
+    <ProjectReference Include="..\Visor.HelpFileTemplate\Visor.HelpFileTemplate.csproj">
+      <Project>{BB9AF10C-267B-4D42-9E0E-815E5B39A5C3}</Project>
+      <Name>Visor.HelpFileTemplate</Name>
+      <VSIXSubPath>ItemTemplates</VSIXSubPath>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
+    </ProjectReference>
+    <ProjectReference Include="..\Visor.HtmlTemplate\Visor.HtmlTemplate.csproj">
+      <Project>{9D233DE0-F98E-44F2-9265-C4DF702DB696}</Project>
+      <Name>Visor.HtmlTemplate</Name>
+      <VSIXSubPath>ItemTemplates</VSIXSubPath>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
+    </ProjectReference>
+    <ProjectReference Include="..\Visor.LetterFileTemplate\Visor.LetterFileTemplate.csproj">
+      <Project>{74F037F7-4690-4295-93C1-2209A505FCB0}</Project>
+      <Name>Visor.LetterFileTemplate</Name>
+      <VSIXSubPath>ItemTemplates</VSIXSubPath>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
+    </ProjectReference>
     <ProjectReference Include="..\Visor.Lib\Visor.Lib.csproj">
       <Project>{f5e6ec43-74f5-4d65-9164-1d41f4f1b7a9}</Project>
       <Name>Visor.Lib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Visor.ProjectTemplate\Visor.ProjectTemplate.csproj">
+      <Project>{81697D5A-B33D-4215-8FFF-E162402AE395}</Project>
+      <Name>Visor.ProjectTemplate</Name>
+      <VSIXSubPath>ProjectTemplates</VSIXSubPath>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<VSTemplate Version="3.0.0" Type="Project" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005" xmlns:sdk="http://schemas.microsoft.com/developer/vstemplate-sdkextension/2010">
+  <TemplateData>
+    <Name>Visor Project</Name>
+    <Description>Basic Visor project</Description>
+    <Icon>Basic.ico</Icon>
+    <ProjectType>Repgen</ProjectType>
+    <RequiredFrameworkVersion>2.0</RequiredFrameworkVersion>
+    <SortOrder>1000</SortOrder>
+    <TemplateID>0c04ce45-ceda-4ea7-a36e-657da9177a7b</TemplateID>
+    <CreateNewFolder>true</CreateNewFolder>
+    <DefaultName>VisorProject</DefaultName>
+    <ProvideDefaultName>true</ProvideDefaultName>
+  </TemplateData>
+  <TemplateContent>
+    <Project File="Basic.symproj" ReplaceParameters="true">
+      <ProjectItem ReplaceParameters="true" OpenInEditor="true">NEW.SPECFILE.rg</ProjectItem>
+    </Project>
+  </TemplateContent>
+</VSTemplate>

@@ -2,10 +2,9 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using Visor.Annotations;
 using Visor.Options;
 
-namespace Visor.ReportRunner
+namespace Visor.Lib
 {
     public class BatchJob : INotifyPropertyChanged
     {
@@ -54,7 +53,6 @@ namespace Visor.ReportRunner
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        [NotifyPropertyChangedInvocator]
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChangedEventHandler handler = PropertyChanged;

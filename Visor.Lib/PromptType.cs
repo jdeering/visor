@@ -1,4 +1,4 @@
-﻿namespace Visor.ReportRunner
+﻿namespace Visor.Lib
 {
     public enum PromptType
     {

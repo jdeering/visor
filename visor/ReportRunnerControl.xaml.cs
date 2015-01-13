@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using Visor.Lib;
 using Visor.Options;
 
 namespace Visor.ReportRunner
@@ -62,9 +63,12 @@ namespace Visor.ReportRunner
 
         private void OpenReport(object sender, RoutedEventArgs e)
         {
+            if (!(sender is MenuItem)) return;
+
             try
             {
                 var report = (sender as MenuItem).CommandParameter as Report;
+                if (report == null) return;
                 report.Open();
             }
             catch
@@ -74,9 +78,14 @@ namespace Visor.ReportRunner
 
         private void RunFileMaintenance(object sender, RoutedEventArgs e)
         {
+            if (!(sender is MenuItem)) return;
+
             try
             {
                 var report = (sender as MenuItem).CommandParameter as Report;
+                if (report == null) return;
+
+                // TODO: Kick off FM job
             }
             catch
             {

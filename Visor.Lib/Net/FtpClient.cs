@@ -1,8 +1,9 @@
 ﻿using System.Net;
 using AlexPilotti.FTPS.Client;
 using AlexPilotti.FTPS.Common;
+using Visor.Net;
 
-namespace Visor.Net.Ftp
+namespace Visor.Lib.Net
 {
     public class FtpClient
     {

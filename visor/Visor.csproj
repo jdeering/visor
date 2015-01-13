@@ -67,9 +67,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Accessibility" />
-    <Reference Include="AlexPilotti.FTPS.Client">
-      <HintPath>..\packages\AlexFTPS.1.1.0.27735\lib\net20\AlexPilotti.FTPS.Client.dll</HintPath>
-    </Reference>
     <Reference Include="envdte, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <EmbedInteropTypes>False</EmbedInteropTypes>
     </Reference>
@@ -108,13 +105,16 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="Ninject">
+      <HintPath>..\packages\Ninject.3.2.2.0\lib\net45-full\Ninject.dll</HintPath>
+    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="PresentationUI, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="ReachFramework" />
-    <Reference Include="Symitar, Version=1.4.59.0, Culture=neutral, PublicKeyToken=432f92be6d634a43, processorArchitecture=MSIL">
+    <Reference Include="Symitar, Version=2.0.1.0, Culture=neutral, PublicKeyToken=432f92be6d634a43, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\SymSharp.1.4.59.0\lib\net40\Symitar.dll</HintPath>
+      <HintPath>..\packages\SymSharp.2.0.1.0\lib\net40\Symitar.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -178,9 +178,7 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Extensions\Crypto.cs" />
-    <Compile Include="Extensions\FileHandler.cs" />
-    <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="FileHandler.cs" />
     <Compile Include="Guids.cs" />
     <Compile Include="LanguageService\AuthoringScope.cs" />
     <Compile Include="LanguageService\Configuration.cs" />
@@ -202,38 +200,22 @@
     <Compile Include="LanguageService\ReservedWords\SymitarVariables.cs" />
     <Compile Include="LanguageService\Resolver.cs" />
     <Compile Include="LanguageService\Source.cs" />
-    <Compile Include="Net\ConnectionInformation.cs" />
-    <Compile Include="Net\Ftp\FtpClient.cs" />
-    <Compile Include="Net\Ftp\FtpRequest.cs" />
-    <Compile Include="Net\Ftp\FtpTransferType.cs" />
-    <Compile Include="Net\Interfaces\IConnectionInformation.cs" />
-    <Compile Include="Net\Interfaces\ILogin.cs" />
-    <Compile Include="Net\Login.cs" />
-    <Compile Include="Options\OptionsControl.cs">
+    <Compile Include="OptionsControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Options\OptionsControl.Designer.cs">
+    <Compile Include="OptionsControl.Designer.cs">
       <DependentUpon>OptionsControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Options\SymDirectory.cs" />
-    <Compile Include="Options\SymServerInfo.cs" />
-    <Compile Include="Options\VisorOptions.cs">
-      <SubType>Component</SubType>
     </Compile>
     <Compile Include="Project\BasicProjectNode.cs" />
     <Compile Include="Project\ProjectFactory.cs" />
     <Compile Include="Properties\Annotations.cs" />
-    <Compile Include="ReportRunner\BatchJob.cs" />
-    <Compile Include="ReportRunner\PromptType.cs" />
-    <Compile Include="ReportRunner\ReportPromptDialog.xaml.cs">
+    <Compile Include="ReportPromptDialog.xaml.cs">
       <DependentUpon>ReportPromptDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ReportRunner\Report.cs" />
-    <Compile Include="ReportRunner\ReportPrompt.cs" />
-    <Compile Include="ReportRunner\ReportRunnerControl.xaml.cs">
+    <Compile Include="ReportRunnerControl.xaml.cs">
       <DependentUpon>ReportRunnerControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ReportRunner\ReportToolWindow.cs" />
+    <Compile Include="ReportToolWindow.cs" />
     <Compile Include="Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -241,11 +223,14 @@
     </Compile>
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Toolbar\PkgCmdID.cs" />
+    <Compile Include="VisorOptions.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="VisorPackage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Options\OptionsControl.resx">
+    <EmbeddedResource Include="OptionsControl.resx">
       <DependentUpon>OptionsControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources.resx">
@@ -321,20 +306,6 @@
     <Content Include="Resources\Package.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="ReportRunner\ReportPromptDialog.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="ReportRunner\ReportRunnerControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
       <Visible>False</Visible>
       <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
@@ -345,6 +316,22 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Visor.Lib\Visor.Lib.csproj">
+      <Project>{f5e6ec43-74f5-4d65-9164-1d41f4f1b7a9}</Project>
+      <Name>Visor.Lib</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="ReportPromptDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ReportRunnerControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
   <PropertyGroup>
     <UseCodebase>true</UseCodebase>

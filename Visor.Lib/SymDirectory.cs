@@ -6,16 +6,18 @@ using System.Linq;
 using Symitar;
 using Symitar.Interfaces;
 using Visor.Net.Ftp;
-using Visor.ReportRunner;
+using Visor.Options;
 using File = Symitar.File;
 
-namespace Visor.Options
+namespace Visor.Lib
 {
     public class SymDirectory
     {
         private string[] _extensionsToKeep;
         private SymSession _session;
         private ISymSocket _socket;
+
+        public IFileSystem FileSystem { get; set; }
 
         public SymDirectory()
         {
@@ -48,8 +50,6 @@ namespace Visor.Options
             UserId = userId;
 
             _socket = new SymSocket(new SocketAdapter(), server.Host, server.TelnetPort);
-
-            _extensionsToKeep = new[] {".html"};
         }
 
         public override string ToString()
@@ -86,7 +86,7 @@ namespace Visor.Options
         {
             var request = new FtpRequest(Server.Host, Server.FtpPort, Server.AixUsername, Server.AixPassword);
 
-            string remoteFolder = Utilities.ContainingFolder(Institution, GetSymitarFileType(path));
+            string remoteFolder = Utilities.ContainingFolder(Institution, FileUtilities.GetSymitarFileType(path));
             string remotePath = String.Format("{0}/{1}", remoteFolder, Path.GetFileNameWithoutExtension(path));
 
             return request.FileExists(remotePath);
@@ -96,7 +96,7 @@ namespace Visor.Options
         {
             var request = new FtpRequest(Server.Host, Server.FtpPort, Server.AixUsername, Server.AixPassword);
 
-            string destinationFolder = Utilities.ContainingFolder(Institution, GetSymitarFileType(path));
+            string destinationFolder = Utilities.ContainingFolder(Institution, FileUtilities.GetSymitarFileType(path));
 
             request.Upload(
                 path,
@@ -110,9 +110,9 @@ namespace Visor.Options
         public void DownloadFile(string path, Action<string> successCallback, Action<FtpException> errorCallback)
         {
             var request = new FtpRequest(Server.Host, Server.FtpPort, Server.AixUsername, Server.AixPassword);
-
-            string sourceFolder = Utilities.ContainingFolder(Institution, GetSymitarFileType(path));
-
+            var fileType = FileUtilities.GetSymitarFileType(path);
+            var sourceFolder = Utilities.ContainingFolder(Institution, fileType);
+            
             request.Download(
                 String.Format("{0}/{1}", sourceFolder, Path.GetFileNameWithoutExtension(path)),
                 path,
@@ -124,9 +124,9 @@ namespace Visor.Options
 
         public void Install(string path, Action<string, int> successCallback, Action<string, string> errorCallback)
         {
-            File file = GetSymitarFile(path);
-            SpecfileResult result;
+            var file = FileUtilities.GetSymitarFile(path);
 
+            SpecfileResult result;
             try
             {
                 if (!_session.LoggedIn)
@@ -150,46 +150,10 @@ namespace Visor.Options
             }
         }
 
-        private File GetSymitarFile(string path)
-        {
-            return new File
-                {
-                    Name = GetSymitarFileName(path),
-                    Type = GetSymitarFileType(path)
-                };
-        }
-
-        private string GetSymitarFileName(string path)
-        {
-            string extension = Path.GetExtension(path);
-
-            if (_extensionsToKeep.Contains(extension))
-                return Path.GetFileName(path);
-            else
-                return Path.GetFileNameWithoutExtension(path);
-        }
-
-        private FileType GetSymitarFileType(string path)
-        {
-            string extension = Path.GetExtension(path);
-
-            switch (extension)
-            {
-                case ".rg":
-                    return FileType.RepGen;
-                case ".hlp":
-                    return FileType.Help;
-                case ".rpt":
-                    return FileType.Report;
-                default:
-                    return FileType.Letter;
-            }
-        }
-
         public void Run(string fileName, List<string> promptAnswers, SymSession.FileRunStatus progressHandler,
                         RunWorkerCompletedEventHandler jobCompletionHandler)
         {
-            var file = new File {Name = fileName, Type = FileType.RepGen};
+            var file = new Symitar.File {Name = fileName, Type = FileType.RepGen};
             int currPrompt = 0;
 
             if (!_session.LoggedIn)
@@ -219,7 +183,7 @@ namespace Visor.Options
 
             for (int i = 0; i < sequences.Count(); i++)
             {
-                reports.Add(new Report {Sequence = sequences[i], Title = titles[i]});
+                reports.Add(new Report(FileSystem) {Sequence = sequences[i], Title = titles[i]});
             }
 
             return reports;
@@ -228,6 +192,47 @@ namespace Visor.Options
         public string GetReportTitle(int sequence)
         {
             return "";
+        }
+    }
+
+    public static class FileUtilities
+    {
+        static readonly List<string> ExtensionsToKeep = new List<string> { ".html" };
+
+        public static File GetSymitarFile(string path)
+        {
+            return new File
+            {
+                Name = GetSymitarFileName(path),
+                Type = GetSymitarFileType(path)
+            };
+        }
+
+        public static string GetSymitarFileName(string path)
+        {
+            var extension = Path.GetExtension(path);
+
+            if (ExtensionsToKeep.Contains(extension))
+                return Path.GetFileName(path);
+            else
+                return Path.GetFileNameWithoutExtension(path);
+        }
+
+        public static FileType GetSymitarFileType(string path)
+        {
+            var extension = Path.GetExtension(path);
+
+            switch (extension)
+            {
+                case ".rg":
+                    return FileType.RepGen;
+                case ".hlp":
+                    return FileType.Help;
+                case ".rpt":
+                    return FileType.Report;
+                default:
+                    return FileType.Letter;
+            }
         }
     }
 }

@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:Visor"
-             xmlns:runner="clr-namespace:Visor.ReportRunner"
+             xmlns:runner="clr-namespace:Visor.ReportRunner" xmlns:lib="clr-namespace:Visor.Lib;assembly=Visor.Lib"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
 
@@ -24,18 +24,18 @@
             </Style.Triggers>
         </Style>
 
-        <runner:ReportList x:Key="TestReports">
-            <runner:Report Title="Generated Report" Sequence="98" />
-            <runner:Report Title="Generated Report 2" Sequence="99" />
-        </runner:ReportList>
+        <lib:ReportList x:Key="TestReports">
+            <lib:Report Title="Generated Report" Sequence="98" />
+            <lib:Report Title="Generated Report 2" Sequence="99" />
+        </lib:ReportList>
 
-        <runner:BatchJobs x:Key="Jobs">
+        <lib:BatchJobs x:Key="Jobs">
             <!--
             <runner:BatchJob FileName="Test1" Status="Complete" Sequence="100" Reports="{StaticResource TestReports}" />
             <runner:BatchJob FileName="Test2" Status="Running" Sequence="103" />
             <runner:BatchJob FileName="Test3" Status="Failed" Sequence="104" />
             -->
-        </runner:BatchJobs>
+        </lib:BatchJobs>
 
     </UserControl.Resources>
 
@@ -59,7 +59,7 @@
 
                 <TreeView.Resources>
 
-                    <HierarchicalDataTemplate DataType="{x:Type runner:BatchJob}" ItemsSource="{Binding Reports}">
+                    <HierarchicalDataTemplate DataType="{x:Type lib:BatchJob}" ItemsSource="{Binding Reports}">
                         <DockPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                                    Width="{Binding Width, ElementName=JobList, Mode=Default}" Margin="0,1,0,1">
                             <TextBlock Text="{Binding Path=Sequence}" Style="{StaticResource OutputColoring}" />
@@ -70,7 +70,7 @@
                         </DockPanel>
                     </HierarchicalDataTemplate>
 
-                    <HierarchicalDataTemplate DataType="{x:Type runner:Report}">
+                    <HierarchicalDataTemplate DataType="{x:Type lib:Report}">
                         <DockPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                                    Width="{Binding Width, ElementName=JobList, Mode=Default}">
                             <TextBlock Text="{Binding Path=Sequence}" />

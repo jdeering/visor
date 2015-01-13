@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using Microsoft.VisualStudio.Shell;
 using Newtonsoft.Json;
 using Visor.Extensions;
+using Visor.Lib;
 
 namespace Visor.Options
 {
@@ -17,8 +18,19 @@ namespace Visor.Options
         private readonly string _savePath;
 
         public List<SymDirectory> Directories;
+        public ICryptoService CryptoService { get; set; }
 
         public VisorOptions()
+        {
+            Directories = new List<SymDirectory>();
+
+            _saveDirectory = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                "Visor");
+            _savePath = Path.Combine(_saveDirectory, @"serverOptions.xml");
+        }
+
+        public VisorOptions(ICryptoService cryptoService)
         {
             Directories = new List<SymDirectory>();
 
@@ -52,7 +64,7 @@ namespace Visor.Options
 
             string json = JsonConvert.SerializeObject(Directories);
 
-            byte[] encryptedData = Crypto.Encrypt(json);
+            byte[] encryptedData = CryptoService.Encrypt(json);
 
             File.WriteAllText(_savePath, Convert.ToBase64String(encryptedData));
 
@@ -67,7 +79,7 @@ namespace Visor.Options
             {
                 string fileData = File.ReadAllText(_savePath);
                 byte[] encryptedData = Convert.FromBase64String(fileData);
-                string json = Crypto.Decrypt(encryptedData);
+                string json = CryptoService.Decrypt(encryptedData);
 
                 Directories = JsonConvert.DeserializeObject<List<SymDirectory>>(json);
             }

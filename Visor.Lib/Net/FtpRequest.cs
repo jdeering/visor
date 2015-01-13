@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using AlexPilotti.FTPS.Common;
+using Visor.Lib.Net;
 
 namespace Visor.Net.Ftp
 {
@@ -27,20 +28,20 @@ namespace Visor.Net.Ftp
          * 
          */
 
-        public void Upload(string source, string destination, Action<string> SuccessCallback)
+        public void Upload(string source, string destination, Action<string> successCallback)
         {
-            Upload(_connectionInformation, _login, source, destination, SuccessCallback, null, DEFAULT_TRANSFER_TYPE);
+            Upload(_connectionInformation, _login, source, destination, successCallback, null, DEFAULT_TRANSFER_TYPE);
         }
 
-        public void Upload(string source, string destination, Action<string> SuccessCallback, FtpTransferType type)
+        public void Upload(string source, string destination, Action<string> successCallback, FtpTransferType type)
         {
-            Upload(_connectionInformation, _login, source, destination, SuccessCallback, null, type);
+            Upload(_connectionInformation, _login, source, destination, successCallback, null, type);
         }
 
-        public void Upload(string source, string destination, Action<string> SuccessCallback,
+        public void Upload(string source, string destination, Action<string> successCallback,
                            Action<FtpException> ErrorCallback, FtpTransferType type)
         {
-            Upload(_connectionInformation, _login, source, destination, SuccessCallback, ErrorCallback, type);
+            Upload(_connectionInformation, _login, source, destination, successCallback, ErrorCallback, type);
         }
 
         public void Upload(IConnectionInformation connectionInfo, ILogin login, string source, string destination,

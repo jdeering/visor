@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
+using Visor.Lib;
 
 namespace Visor.ReportRunner
 {
@@ -9,7 +10,7 @@ namespace Visor.ReportRunner
     /// </summary>
     public partial class ReportPromptDialog
     {
-        public ReportPromptDialog(List<ReportPrompt> prompts)
+        public ReportPromptDialog(IReadOnlyList<ReportPrompt> prompts)
         {
             InitializeComponent();
 

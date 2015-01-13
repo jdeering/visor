@@ -2,9 +2,28 @@
 using System.IO;
 using System.Security.Cryptography;
 
-namespace Visor.Extensions
+namespace Visor.Lib
 {
-    public static class Crypto
+    public interface ICryptoService
+    {
+        byte[] Encrypt(string s);
+        string Decrypt(byte[] b);
+    }
+
+    public class EmbeddedCryptoService : ICryptoService
+    {
+        public byte[] Encrypt(string s)
+        {
+            return CryptoTools.Encrypt(s);
+        }
+
+        public string Decrypt(byte[] b)
+        {
+            return CryptoTools.Decrypt(b);
+        }
+    }
+
+    internal static class CryptoTools
     {
         private static readonly string KeyFilePath =
             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Visor", "Key.pkf");

@@ -15,9 +15,12 @@ using Microsoft.Internal.VisualStudio.PlatformUI;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
+using Ninject;
+using Ninject.Modules;
 using Symitar;
 using Visor.Extensions;
 using Visor.LanguageService;
+using Visor.Lib;
 using Visor.Options;
 using Visor.Project;
 using Visor.ReportRunner;
@@ -89,6 +92,7 @@ namespace Visor
         private string _comboSelection;
         private SymDirectory _currentDirectory;
         private List<SymDirectory> _directories;
+        private IKernel _kernel;
 
         /// <summary>
         ///     Default constructor of the package.
@@ -99,7 +103,7 @@ namespace Visor
         /// </summary>
         public VisorPackage()
         {
-            Debug.WriteLine(string.Format(CultureInfo.CurrentCulture, "Entering constructor for: {0}", ToString()));
+            Debug.WriteLine("Entering constructor for: {0}", ToString());
         }
 
 
@@ -109,15 +113,17 @@ namespace Visor
         /// </summary>
         protected override void Initialize()
         {
-            Debug.WriteLine(string.Format(CultureInfo.CurrentCulture, "Entering Initialize() of: {0}", ToString()));
+            Debug.WriteLine("Entering Initialize() of: {0}", ToString());
             base.Initialize();
+
+            _kernel = new StandardKernel(new ServiceModule());
 
             ReportRunnerToolWindow = FindToolWindow(typeof (ReportToolWindow), 0, true);
             ShowReportWindow();
             RegisterProjectFactory(new ProjectFactory(this));
             RegisterMenuCommands();
         }
-
+        
 
         private void RegisterMenuCommands()
         {
@@ -274,7 +280,8 @@ namespace Visor
 
         private void DownloadCurrentFile(object sender, EventArgs e)
         {
-            _currentDirectory.DownloadFile(GetCurrentFilePath(), FtpDownloadSuccess, FtpError);
+            var path = GetCurrentFilePath();
+            _currentDirectory.DownloadFile(path, FtpDownloadSuccess, FtpError);
         }
 
         private void InstallCurrentFile(object sender, EventArgs e)
@@ -588,6 +595,14 @@ namespace Visor
             Application.Current.Dispatcher.Invoke(
                 DispatcherPriority.Normal,
                 action);
+        }
+    }
+
+    public class ServiceModule : NinjectModule
+    {
+        public override void Load()
+        {
+            Bind<ICryptoService>().To<EmbeddedCryptoService>();
         }
     }
 }

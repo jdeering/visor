@@ -265,7 +265,6 @@
     <EmbeddedResource Include="Resources\db.txt" />
     <EmbeddedResource Include="Resources\functions.txt" />
     <EmbeddedResource Include="Resources\keywords.txt" />
-    <ZipProject Include="Project\Templates\ProjectTemplate\Basic\Basic.vstemplate" />
     <Content Include="Resources\Package.ico" />
   </ItemGroup>
   <ItemGroup>

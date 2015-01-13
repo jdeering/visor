@@ -1,17 +1,14 @@
 ﻿using System;
 using System.IO;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using AlexPilotti.FTPS.Common;
 
 namespace Visor.Net.Ftp
 {
     public class FtpRequest
     {
         private const FtpTransferType DEFAULT_TRANSFER_TYPE = FtpTransferType.Binary;
-        private IConnectionInformation _connectionInformation;
-        private ILogin _login;
+        private readonly IConnectionInformation _connectionInformation;
+        private readonly ILogin _login;
 
         public FtpRequest(string server, int port, string username, string password)
         {
@@ -29,6 +26,7 @@ namespace Visor.Net.Ftp
          * FILE UPLOAD
          * 
          */
+
         public void Upload(string source, string destination, Action<string> SuccessCallback)
         {
             Upload(_connectionInformation, _login, source, destination, SuccessCallback, null, DEFAULT_TRANSFER_TYPE);
@@ -39,26 +37,34 @@ namespace Visor.Net.Ftp
             Upload(_connectionInformation, _login, source, destination, SuccessCallback, null, type);
         }
 
-        public void Upload(string source, string destination, Action<string> SuccessCallback, Action<FtpException> ErrorCallback, FtpTransferType type)
+        public void Upload(string source, string destination, Action<string> SuccessCallback,
+                           Action<FtpException> ErrorCallback, FtpTransferType type)
         {
             Upload(_connectionInformation, _login, source, destination, SuccessCallback, ErrorCallback, type);
         }
 
-        public void Upload(IConnectionInformation connectionInfo, ILogin login, string source, string destination, Action<string> SuccessCallback, Action<FtpException> ErrorCallback, FtpTransferType type)
+        public void Upload(IConnectionInformation connectionInfo, ILogin login, string source, string destination,
+                           Action<string> SuccessCallback, Action<FtpException> ErrorCallback, FtpTransferType type)
         {
             try
             {
-                FtpClient client = new FtpClient(connectionInfo, login);
+                var client = new FtpClient(connectionInfo, login);
 
                 if (type == FtpTransferType.Binary)
-                    client.TransferMode = AlexPilotti.FTPS.Common.ETransferMode.Binary;
+                    client.TransferMode = ETransferMode.Binary;
                 else
-                    client.TransferMode = AlexPilotti.FTPS.Common.ETransferMode.ASCII;
+                    client.TransferMode = ETransferMode.ASCII;
 
                 client.Upload(source, destination);
 
-                try { client.SendCommand(String.Format("SITE CHMOD 755 {0}", destination)); } 
-                catch { /* eat errors on the CHMOD command, probably already has correct permissions if failing */ }
+                try
+                {
+                    client.SendCommand(String.Format("SITE CHMOD 755 {0}", destination));
+                }
+                catch
+                {
+                    /* eat errors on the CHMOD command, probably already has correct permissions if failing */
+                }
             }
             catch (Exception e)
             {
@@ -73,6 +79,7 @@ namespace Visor.Net.Ftp
          * FILE DOWNLOAD
          * 
          */
+
         public void Download(string source, string destination, Action<string> SuccessCallback)
         {
             Download(_connectionInformation, _login, source, destination, SuccessCallback, null, DEFAULT_TRANSFER_TYPE);
@@ -83,21 +90,23 @@ namespace Visor.Net.Ftp
             Download(_connectionInformation, _login, source, destination, SuccessCallback, null, type);
         }
 
-        public void Download(string source, string destination, Action<string> SuccessCallback, Action<FtpException> ErrorCallback, FtpTransferType type)
+        public void Download(string source, string destination, Action<string> SuccessCallback,
+                             Action<FtpException> ErrorCallback, FtpTransferType type)
         {
             Download(_connectionInformation, _login, source, destination, SuccessCallback, ErrorCallback, type);
         }
 
-        public void Download(IConnectionInformation connectionInfo, ILogin login, string source, string destination, Action<string> SuccessCallback, Action<FtpException> ErrorCallback, FtpTransferType type)
+        public void Download(IConnectionInformation connectionInfo, ILogin login, string source, string destination,
+                             Action<string> SuccessCallback, Action<FtpException> ErrorCallback, FtpTransferType type)
         {
             try
             {
-                FtpClient client = new FtpClient(connectionInfo, login);
+                var client = new FtpClient(connectionInfo, login);
 
                 if (type == FtpTransferType.Binary)
-                    client.TransferMode = AlexPilotti.FTPS.Common.ETransferMode.Binary;
+                    client.TransferMode = ETransferMode.Binary;
                 else
-                    client.TransferMode = AlexPilotti.FTPS.Common.ETransferMode.ASCII;
+                    client.TransferMode = ETransferMode.ASCII;
 
                 client.Download(source, destination);
             }
@@ -114,16 +123,17 @@ namespace Visor.Net.Ftp
          * FILE EXISTS CHECK
          * 
          */
+
         public bool FileExists(string path)
         {
-            FtpClient client = new FtpClient(_connectionInformation, _login);
+            var client = new FtpClient(_connectionInformation, _login);
             return client.FileExists(path);
         }
     }
 
     public class FtpException : Exception
     {
-        public FtpException() : base()
+        public FtpException()
         {
         }
 

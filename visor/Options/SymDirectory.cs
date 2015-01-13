@@ -1,33 +1,21 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using Symitar;
 using Symitar.Interfaces;
 using Visor.Net.Ftp;
 using Visor.ReportRunner;
+using File = Symitar.File;
 
 namespace Visor.Options
 {
     public class SymDirectory
     {
-        public int Institution { get; set; }
-        public string UserId { get; set; }
-        public SymServerInfo Server { get; set; }
-
+        private string[] _extensionsToKeep;
         private SymSession _session;
-
-        private string[] ExtensionsToKeep;
         private ISymSocket _socket;
-
-        public bool LoggedIn
-        {
-            get { return _session != null && _session.LoggedIn; }
-        }
 
         public SymDirectory()
         {
@@ -44,6 +32,15 @@ namespace Visor.Options
             Initialize(server, directory, userId);
         }
 
+        public int Institution { get; set; }
+        public string UserId { get; set; }
+        public SymServerInfo Server { get; set; }
+
+        public bool LoggedIn
+        {
+            get { return _session != null && _session.LoggedIn; }
+        }
+
         private void Initialize(SymServerInfo server, int directory, string userId)
         {
             Server = server;
@@ -52,7 +49,7 @@ namespace Visor.Options
 
             _socket = new SymSocket(new SocketAdapter(), server.Host, server.TelnetPort);
 
-            ExtensionsToKeep = new string[] { ".html" };
+            _extensionsToKeep = new[] {".html"};
         }
 
         public override string ToString()
@@ -89,8 +86,8 @@ namespace Visor.Options
         {
             var request = new FtpRequest(Server.Host, Server.FtpPort, Server.AixUsername, Server.AixPassword);
 
-            var remoteFolder = Utilities.ContainingFolder(Institution, GetSymitarFileType(path));
-            var remotePath = String.Format("{0}/{1}", remoteFolder, Path.GetFileNameWithoutExtension(path));
+            string remoteFolder = Utilities.ContainingFolder(Institution, GetSymitarFileType(path));
+            string remotePath = String.Format("{0}/{1}", remoteFolder, Path.GetFileNameWithoutExtension(path));
 
             return request.FileExists(remotePath);
         }
@@ -99,7 +96,7 @@ namespace Visor.Options
         {
             var request = new FtpRequest(Server.Host, Server.FtpPort, Server.AixUsername, Server.AixPassword);
 
-            var destinationFolder = Utilities.ContainingFolder(Institution, GetSymitarFileType(path));
+            string destinationFolder = Utilities.ContainingFolder(Institution, GetSymitarFileType(path));
 
             request.Upload(
                 path,
@@ -107,27 +104,27 @@ namespace Visor.Options
                 successCallback,
                 errorCallback,
                 FtpTransferType.Text
-            );
+                );
         }
 
         public void DownloadFile(string path, Action<string> successCallback, Action<FtpException> errorCallback)
         {
-            FtpRequest request = new FtpRequest(Server.Host, Server.FtpPort, Server.AixUsername, Server.AixPassword);
+            var request = new FtpRequest(Server.Host, Server.FtpPort, Server.AixUsername, Server.AixPassword);
 
-            var sourceFolder = Utilities.ContainingFolder(Institution, GetSymitarFileType(path));
+            string sourceFolder = Utilities.ContainingFolder(Institution, GetSymitarFileType(path));
 
             request.Download(
                 String.Format("{0}/{1}", sourceFolder, Path.GetFileNameWithoutExtension(path)),
-                path,                
+                path,
                 successCallback,
                 errorCallback,
                 FtpTransferType.Text
-            );
+                );
         }
 
         public void Install(string path, Action<string, int> successCallback, Action<string, string> errorCallback)
         {
-            Symitar.File file = GetSymitarFile(path);
+            File file = GetSymitarFile(path);
             SpecfileResult result;
 
             try
@@ -153,20 +150,20 @@ namespace Visor.Options
             }
         }
 
-        private Symitar.File GetSymitarFile(string path)
+        private File GetSymitarFile(string path)
         {
-            return new Symitar.File
+            return new File
                 {
-                    Name = GetSymitarFileName(path), 
+                    Name = GetSymitarFileName(path),
                     Type = GetSymitarFileType(path)
                 };
         }
 
         private string GetSymitarFileName(string path)
         {
-            var extension = Path.GetExtension(path);
+            string extension = Path.GetExtension(path);
 
-            if (ExtensionsToKeep.Contains(extension))
+            if (_extensionsToKeep.Contains(extension))
                 return Path.GetFileName(path);
             else
                 return Path.GetFileNameWithoutExtension(path);
@@ -174,30 +171,35 @@ namespace Visor.Options
 
         private FileType GetSymitarFileType(string path)
         {
-            var extension = Path.GetExtension(path);
+            string extension = Path.GetExtension(path);
 
             switch (extension)
             {
-                case ".rg": return FileType.RepGen;
-                case ".hlp": return FileType.Help;
-                case ".rpt": return FileType.Report;
-                default: return FileType.Letter;
+                case ".rg":
+                    return FileType.RepGen;
+                case ".hlp":
+                    return FileType.Help;
+                case ".rpt":
+                    return FileType.Report;
+                default:
+                    return FileType.Letter;
             }
         }
 
-        public void Run(string fileName, List<string> promptAnswers, SymSession.FileRunStatus progressHandler, RunWorkerCompletedEventHandler jobCompletionHandler)
+        public void Run(string fileName, List<string> promptAnswers, SymSession.FileRunStatus progressHandler,
+                        RunWorkerCompletedEventHandler jobCompletionHandler)
         {
-            var file = new Symitar.File() { Name = fileName, Type = FileType.RepGen };
-            var currPrompt = 0;
+            var file = new File {Name = fileName, Type = FileType.RepGen};
+            int currPrompt = 0;
 
             if (!_session.LoggedIn)
                 Reset();
 
             _session.FileRun(file,
-                progressHandler, 
-                (prompt) => currPrompt < promptAnswers.Count ? promptAnswers[currPrompt++] : "", 
-                3,
-                jobCompletionHandler);
+                             progressHandler,
+                             (prompt) => currPrompt < promptAnswers.Count ? promptAnswers[currPrompt++] : "",
+                             3,
+                             jobCompletionHandler);
         }
 
         public List<int> GetReportSequences(int batchOutputSequence)
@@ -210,14 +212,14 @@ namespace Visor.Options
             if (!_session.LoggedIn)
                 Reset();
 
-            var sequences = _session.GetReportSequences(batchOutputSequence);
-            var titles = _session.GetReportTitles(batchOutputSequence);
+            List<int> sequences = _session.GetReportSequences(batchOutputSequence);
+            List<string> titles = _session.GetReportTitles(batchOutputSequence);
 
             var reports = new List<Report>();
 
-            for (var i = 0; i < sequences.Count(); i++)
+            for (int i = 0; i < sequences.Count(); i++)
             {
-                reports.Add(new Report { Sequence = sequences[i], Title = titles[i] });
+                reports.Add(new Report {Sequence = sequences[i], Title = titles[i]});
             }
 
             return reports;

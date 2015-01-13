@@ -4,7 +4,8 @@ namespace Visor.LanguageService
 {
     public class Methods : Microsoft.VisualStudio.Package.Methods
     {
-        readonly IList<Method> _methods;
+        private readonly IList<Method> _methods;
+
         public Methods(IList<Method> methods)
         {
             _methods = methods;
@@ -40,9 +41,10 @@ namespace Visor.LanguageService
             return (_methods[index].Parameters == null) ? 0 : _methods[index].Parameters.Count;
         }
 
-        public override void GetParameterInfo(int index, int paramIndex, out string name, out string display, out string description)
+        public override void GetParameterInfo(int index, int paramIndex, out string name, out string display,
+                                              out string description)
         {
-            var parameter = _methods[index].Parameters[paramIndex];
+            Parameter parameter = _methods[index].Parameters[paramIndex];
             name = parameter.Name;
             display = parameter.Display;
             description = parameter.Description;

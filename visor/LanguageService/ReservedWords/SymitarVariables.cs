@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Visor.LanguageService.ReservedWords
 {
     public static class SymitarVariables
     {
         private static List<Variable> _list;
+
         public static List<Variable> List
         {
             get
@@ -22,7 +19,7 @@ namespace Visor.LanguageService.ReservedWords
 
         public static void LoadFile()
         {
-            var stream = Resource.GetStream("vars.txt");
+            Stream stream = Resource.GetStream("vars.txt");
             if (stream == null) return;
 
             _list = new List<Variable>();
@@ -31,10 +28,10 @@ namespace Visor.LanguageService.ReservedWords
             {
                 while (reader.Peek() >= 0)
                 {
-                    var line = reader.ReadLine();
+                    string line = reader.ReadLine();
                     if (string.IsNullOrEmpty(line)) continue;
 
-                    var tokens = line.Trim().Split('|');
+                    string[] tokens = line.Trim().Split('|');
 
                     _list.Add(new Variable
                         {
@@ -49,8 +46,8 @@ namespace Visor.LanguageService.ReservedWords
 
     public struct Variable
     {
-        public string Name;
         public string Description;
+        public string Name;
         public string Type;
     }
 }

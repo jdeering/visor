@@ -10,15 +10,16 @@ PURPOSE, MERCHANTABILITY, OR NON-INFRINGEMENT.
 ***************************************************************************/
 
 using System.Collections.Generic;
-using System.Linq;
-using Microsoft.VisualStudio.TextManager.Interop;
+using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Package;
+using Microsoft.VisualStudio.TextManager.Interop;
 
 namespace Visor.LanguageService
 {
     public class Source : Microsoft.VisualStudio.Package.Source
     {
-        public Source(Microsoft.VisualStudio.Package.LanguageService service, IVsTextLines textLines, Colorizer colorizer)
+        public Source(Microsoft.VisualStudio.Package.LanguageService service, IVsTextLines textLines,
+                      Colorizer colorizer)
             : base(service, textLines, colorizer)
         {
         }
@@ -26,11 +27,11 @@ namespace Visor.LanguageService
         public object ParseResult { get; set; }
         public IList<TextSpan[]> Braces { get; set; }
 
-        public override void OnCommand(IVsTextView textView, Microsoft.VisualStudio.VSConstants.VSStd2KCmdID command, char ch)
+        public override void OnCommand(IVsTextView textView, VSConstants.VSStd2KCmdID command, char ch)
         {
             base.OnCommand(textView, command, ch);
 
-            if (command == Microsoft.VisualStudio.VSConstants.VSStd2KCmdID.TYPECHAR && char.IsLetter(ch))
+            if (command == VSConstants.VSStd2KCmdID.TYPECHAR && char.IsLetter(ch))
             {
                 //TriggerAutoComplete(textView);
             }
@@ -43,7 +44,7 @@ namespace Visor.LanguageService
 
             int line, idx;
             textView.GetCaretPos(out line, out idx);
-            var info = GetTokenInfo(line, idx);
+            TokenInfo info = GetTokenInfo(line, idx);
 
             // Do not fire completions when typing a comment, number, or "string"
             if (info.Color != TokenColor.Comment && info.Color != TokenColor.Number && info.Color != TokenColor.String)

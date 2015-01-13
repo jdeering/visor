@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace Visor.LanguageService
 {
-    interface IAstResolver
+    internal interface IAstResolver
     {
         IList<Declaration> FindCompletions(Source source, int line, int col);
         IList<Declaration> FindMembers(Source source, int line, int col);

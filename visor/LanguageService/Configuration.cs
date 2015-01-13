@@ -1,18 +1,25 @@
 using System;
 using System.Collections.Generic;
+using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Package;
 using Microsoft.VisualStudio.TextManager.Interop;
 
 namespace Visor.LanguageService
 {
-    public static partial class Configuration
+    public static class Configuration
     {
         public static Grammar Grammar = new Grammar();
 
         public static string Name = "RepGen";
         public static string FormatList = "All Files (*.*)\n*.*\nRepGen Files (*.rg)\n*.rg\n";
 
-        private static List<IVsColorableItem> colorableItems = new List<IVsColorableItem>();
+        private static readonly List<IVsColorableItem> colorableItems = new List<IVsColorableItem>();
+
+        private static readonly TokenDefinition defaultDefinition = new TokenDefinition(TokenType.Text, TokenColor.Text,
+                                                                                        TokenTriggers.None);
+
+        private static readonly Dictionary<string, TokenDefinition> definitions =
+            new Dictionary<string, TokenDefinition>();
 
         public static IList<IVsColorableItem> ColorableItems
         {
@@ -24,10 +31,11 @@ namespace Visor.LanguageService
             return CreateColor(name, foreground, background, false, false);
         }
 
-        public static TokenColor CreateColor(string name, COLORINDEX foreground, COLORINDEX background, bool bold, bool strikethrough)
+        public static TokenColor CreateColor(string name, COLORINDEX foreground, COLORINDEX background, bool bold,
+                                             bool strikethrough)
         {
             colorableItems.Add(new ColorableItem(name, foreground, background, bold, strikethrough));
-            return (TokenColor)colorableItems.Count;
+            return (TokenColor) colorableItems.Count;
         }
 
         public static void ColorToken(string tokenName, TokenType type, TokenColor color, TokenTriggers trigger)
@@ -41,44 +49,43 @@ namespace Visor.LanguageService
             return definitions.TryGetValue(tokenName, out result) ? result : defaultDefinition;
         }
 
-        private static TokenDefinition defaultDefinition = new TokenDefinition(TokenType.Text, TokenColor.Text, TokenTriggers.None);
-        private static Dictionary<string, TokenDefinition> definitions = new Dictionary<string, TokenDefinition>();
-
         public struct TokenDefinition
         {
-            public TokenDefinition(TokenType type, TokenColor color, TokenTriggers triggers)
-            {
-                this.TokenType = type;
-                this.TokenColor = color;
-                this.TokenTriggers = triggers;
-            }
-
-            public TokenType TokenType;
             public TokenColor TokenColor;
             public TokenTriggers TokenTriggers;
+            public TokenType TokenType;
+
+            public TokenDefinition(TokenType type, TokenColor color, TokenTriggers triggers)
+            {
+                TokenType = type;
+                TokenColor = color;
+                TokenTriggers = triggers;
+            }
         }
     }
 
     public class ColorableItem : IVsColorableItem
     {
-        private string displayName;
-        private COLORINDEX background;
-        private COLORINDEX foreground;
-        private uint fontFlags = (uint)FONTFLAGS.FF_DEFAULT;
+        private readonly COLORINDEX background;
+        private readonly string displayName;
+        private readonly uint fontFlags = (uint) FONTFLAGS.FF_DEFAULT;
+        private readonly COLORINDEX foreground;
 
-        public ColorableItem(string displayName, COLORINDEX foreground, COLORINDEX background, bool bold, bool strikethrough)
+        public ColorableItem(string displayName, COLORINDEX foreground, COLORINDEX background, bool bold,
+                             bool strikethrough)
         {
             this.displayName = displayName;
             this.background = background;
             this.foreground = foreground;
 
             if (bold)
-                this.fontFlags = this.fontFlags | (uint)FONTFLAGS.FF_BOLD;
+                fontFlags = fontFlags | (uint) FONTFLAGS.FF_BOLD;
             if (strikethrough)
-                this.fontFlags = this.fontFlags | (uint)FONTFLAGS.FF_STRIKETHROUGH;
+                fontFlags = fontFlags | (uint) FONTFLAGS.FF_STRIKETHROUGH;
         }
 
         #region IVsColorableItem Members
+
         public int GetDefaultColors(COLORINDEX[] piForeground, COLORINDEX[] piBackground)
         {
             if (null == piForeground)
@@ -101,20 +108,21 @@ namespace Visor.LanguageService
             }
             piBackground[0] = background;
 
-            return Microsoft.VisualStudio.VSConstants.S_OK;
+            return VSConstants.S_OK;
         }
 
         public int GetDefaultFontFlags(out uint pdwFontFlags)
         {
-            pdwFontFlags = this.fontFlags;
-            return Microsoft.VisualStudio.VSConstants.S_OK;
+            pdwFontFlags = fontFlags;
+            return VSConstants.S_OK;
         }
 
         public int GetDisplayName(out string pbstrName)
         {
             pbstrName = displayName;
-            return Microsoft.VisualStudio.VSConstants.S_OK;
+            return VSConstants.S_OK;
         }
+
         #endregion
     }
 }

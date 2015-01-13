@@ -31,7 +31,7 @@ namespace Visor.LanguageService.ReservedWords
 
         public static void LoadFile()
         {
-            var stream = Resource.GetStream("db.txt");
+            Stream stream = Resource.GetStream("db.txt");
             if (stream == null) return;
 
             _records = new List<Record>();
@@ -40,7 +40,7 @@ namespace Visor.LanguageService.ReservedWords
             {
                 while (reader.Peek() >= 0)
                 {
-                    var line = reader.ReadLine();
+                    string line = reader.ReadLine();
                     if (string.IsNullOrEmpty(line)) continue;
 
                     line = line.Trim();
@@ -58,31 +58,31 @@ namespace Visor.LanguageService.ReservedWords
 
         private static void AddRecord(string line)
         {
-            var tokens = line.Split('|');
+            string[] tokens = line.Split('|');
             _records.Add(new Record
-            {
-                Name = tokens[1].ToUpper(),
-                FriendlyName = tokens[2]
-            });
+                {
+                    Name = tokens[1].ToUpper(),
+                    FriendlyName = tokens[2]
+                });
         }
 
         private static void AddField(string line)
         {
-            var tokens = line.Split('|');
-            var record = _records.Last().Name;
+            string[] tokens = line.Split('|');
+            string record = _records.Last().Name;
             if (!_fields.ContainsKey(record))
             {
                 _fields.Add(record, new List<Field>());
             }
 
             _fields[record].Add(new Field
-            {
-                Name = tokens[0].ToUpper(),
-                FriendlyName = tokens[1],
-                Number = int.Parse(tokens[2]),
-                DataType = GetTypeByNumber(int.Parse(tokens[3])),
-                MaxValue = tokens[4] == "null" ? 0 : int.Parse(tokens[4])
-            });
+                {
+                    Name = tokens[0].ToUpper(),
+                    FriendlyName = tokens[1],
+                    Number = int.Parse(tokens[2]),
+                    DataType = GetTypeByNumber(int.Parse(tokens[3])),
+                    MaxValue = tokens[4] == "null" ? 0 : int.Parse(tokens[4])
+                });
         }
 
         private static string GetTypeByNumber(int type)
@@ -113,16 +113,16 @@ namespace Visor.LanguageService.ReservedWords
 
     public struct Record
     {
-        public string Name;
         public string FriendlyName;
+        public string Name;
     }
 
     public struct Field
     {
-        public string Name;
-        public string FriendlyName;
-        public int Number;
         public string DataType;
+        public string FriendlyName;
         public int MaxValue;
+        public string Name;
+        public int Number;
     }
 }

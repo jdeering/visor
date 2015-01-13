@@ -6,24 +6,27 @@ namespace Visor.Extensions
 {
     public static class Crypto
     {
-        private static string KeyFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Visor", "Key.pkf");
-        private static string IVFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Visor", "IV.pkf");
+        private static readonly string KeyFilePath =
+            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Visor", "Key.pkf");
+
+        private static readonly string IVFilePath =
+            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Visor", "IV.pkf");
 
         public static byte[] Encrypt(string s)
         {
-            using (RijndaelManaged rj = new RijndaelManaged())
+            using (var rj = new RijndaelManaged())
             {
                 rj.KeySize = 128;
                 rj.Key = GetPrivateKey();
                 rj.IV = GetPrivateIV();
 
-                var encryptor = rj.CreateEncryptor(rj.Key, rj.IV);
+                ICryptoTransform encryptor = rj.CreateEncryptor(rj.Key, rj.IV);
                 byte[] encrypted;
-                using (MemoryStream ms = new MemoryStream())
+                using (var ms = new MemoryStream())
                 {
-                    using (CryptoStream cs = new CryptoStream(ms, encryptor, CryptoStreamMode.Write))
+                    using (var cs = new CryptoStream(ms, encryptor, CryptoStreamMode.Write))
                     {
-                        using (StreamWriter sw = new StreamWriter(cs))
+                        using (var sw = new StreamWriter(cs))
                         {
                             sw.Write(s);
                         }
@@ -42,19 +45,19 @@ namespace Visor.Extensions
                 throw new FileNotFoundException("Missing private key file");
             }
 
-            using (RijndaelManaged rj = new RijndaelManaged())
+            using (var rj = new RijndaelManaged())
             {
                 rj.KeySize = 128;
                 rj.Key = GetPrivateKey();
                 rj.IV = GetPrivateIV();
 
-                var decryptor = rj.CreateDecryptor(rj.Key, rj.IV);
+                ICryptoTransform decryptor = rj.CreateDecryptor(rj.Key, rj.IV);
                 string decrypted;
-                using (MemoryStream ms = new MemoryStream(data))
+                using (var ms = new MemoryStream(data))
                 {
-                    using (CryptoStream cs = new CryptoStream(ms, decryptor, CryptoStreamMode.Read))
+                    using (var cs = new CryptoStream(ms, decryptor, CryptoStreamMode.Read))
                     {
-                        using (StreamReader sr = new StreamReader(cs))
+                        using (var sr = new StreamReader(cs))
                         {
                             decrypted = sr.ReadToEnd();
                             sr.Close();
@@ -69,12 +72,12 @@ namespace Visor.Extensions
         {
             if (!File.Exists(KeyFilePath))
             {
-                using (RijndaelManaged rj = new RijndaelManaged())
+                using (var rj = new RijndaelManaged())
                 {
                     rj.KeySize = 128;
                     rj.GenerateKey();
 
-                    var fileData = Convert.ToBase64String(rj.Key);
+                    string fileData = Convert.ToBase64String(rj.Key);
 
                     File.WriteAllText(KeyFilePath, fileData);
                 }
@@ -87,12 +90,12 @@ namespace Visor.Extensions
         {
             if (!File.Exists(IVFilePath))
             {
-                using (RijndaelManaged rj = new RijndaelManaged())
+                using (var rj = new RijndaelManaged())
                 {
                     rj.KeySize = 128;
                     rj.GenerateIV();
 
-                    var fileData = Convert.ToBase64String(rj.IV);
+                    string fileData = Convert.ToBase64String(rj.IV);
 
                     File.WriteAllText(IVFilePath, fileData);
                 }

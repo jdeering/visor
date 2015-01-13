@@ -1,37 +1,26 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using Visor.Options;
 
 namespace Visor.ReportRunner
 {
     /// <summary>
-    /// Interaction logic for ReportRunnerControl.xaml
+    ///     Interaction logic for ReportRunnerControl.xaml
     /// </summary>
     public partial class ReportRunnerControl : UserControl
     {
         //public static ObservableCollection<BatchJob> Jobs = new ObservableCollection<BatchJob>();
 
-        private BatchJobs _jobs
-        {
-            get { return ((BatchJobs) Resources["Jobs"]); }
-        }
-
         public ReportRunnerControl()
         {
             InitializeComponent();
+        }
+
+        private BatchJobs _jobs
+        {
+            get { return ((BatchJobs) Resources["Jobs"]); }
         }
 
         public void AddBatchJob(string file, SymDirectory directory)
@@ -48,7 +37,7 @@ namespace Visor.ReportRunner
 
         public void RemoveBatchJob()
         {
-            _jobs.RemoveAt(_jobs.Count-1);
+            _jobs.RemoveAt(_jobs.Count - 1);
         }
 
         public void SetSequence(int sequence)
@@ -79,7 +68,8 @@ namespace Visor.ReportRunner
                 report.Open();
             }
             catch
-            {}
+            {
+            }
         }
 
         private void RunFileMaintenance(object sender, RoutedEventArgs e)
@@ -89,7 +79,8 @@ namespace Visor.ReportRunner
                 var report = (sender as MenuItem).CommandParameter as Report;
             }
             catch
-            { }
+            {
+            }
         }
     }
 }

@@ -3,21 +3,18 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Runtime.InteropServices;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Microsoft.VisualStudio.Shell;
+using Newtonsoft.Json;
 using Visor.Extensions;
-using JsonConvert = Newtonsoft.Json.JsonConvert;
 
 namespace Visor.Options
 {
     [Guid(GuidList.VisorOptionsPageString)]
     public class VisorOptions : DialogPage
     {
-        private string _saveDirectory;
-        private string _savePath;
+        private readonly string _saveDirectory;
+        private readonly string _savePath;
 
         public List<SymDirectory> Directories;
 
@@ -53,9 +50,9 @@ namespace Visor.Options
 
             Directory.CreateDirectory(_saveDirectory);
 
-            var json = JsonConvert.SerializeObject(Directories);
+            string json = JsonConvert.SerializeObject(Directories);
 
-            var encryptedData = Crypto.Encrypt(json);
+            byte[] encryptedData = Crypto.Encrypt(json);
 
             File.WriteAllText(_savePath, Convert.ToBase64String(encryptedData));
 
@@ -69,14 +66,14 @@ namespace Visor.Options
             try
             {
                 string fileData = File.ReadAllText(_savePath);
-                var encryptedData = Convert.FromBase64String(fileData);
-                var json = Crypto.Decrypt(encryptedData);
+                byte[] encryptedData = Convert.FromBase64String(fileData);
+                string json = Crypto.Decrypt(encryptedData);
 
                 Directories = JsonConvert.DeserializeObject<List<SymDirectory>>(json);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
-                var exc = e;
+                Exception exc = e;
                 throw e;
             }
 

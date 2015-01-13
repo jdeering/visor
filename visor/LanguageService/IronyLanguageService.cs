@@ -1,14 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using Visor.LanguageService.ReservedWords;
-using Microsoft.VisualStudio;
-using Microsoft.VisualStudio.TextManager.Interop;
-using Microsoft.VisualStudio.Package;
+using Irony;
 using Irony.Parsing;
-using Visor.Extensions;
-using TokenType = Microsoft.VisualStudio.Package.TokenType;
+using Microsoft.VisualStudio;
+using Microsoft.VisualStudio.Package;
+using Microsoft.VisualStudio.TextManager.Interop;
 
 namespace Visor.LanguageService
 {
@@ -32,16 +29,18 @@ namespace Visor.LanguageService
             _context = new ParsingContext(_parser);
         }
 
-
         #region MPF Accessor and Factory specialisation
+
         private LanguagePreferences _preferences;
+        private IScanner _scanner;
+
         public override LanguagePreferences GetLanguagePreferences()
         {
             if (_preferences == null)
             {
                 _preferences = new LanguagePreferences(Site,
-                                                        typeof(IronyLanguageService).GUID,
-                                                        Name);
+                                                       typeof (IronyLanguageService).GUID,
+                                                       Name);
                 _preferences.Init();
             }
 
@@ -53,7 +52,6 @@ namespace Visor.LanguageService
             return new Source(this, buffer, GetColorizer(buffer));
         }
 
-        private IScanner _scanner;
         public override IScanner GetScanner(IVsTextLines buffer)
         {
             return _scanner ?? (_scanner = new LineScanner(_grammar));
@@ -61,11 +59,16 @@ namespace Visor.LanguageService
 
         #endregion
 
+        public override string Name
+        {
+            get { return Configuration.Name; }
+        }
+
         public override void OnIdle(bool periodic)
         {
             // from IronPythonLanguage sample
             // this appears to be necessary to get a parse request with ParseReason = Check?
-            var src = GetSource(LastActiveTextView);
+            Microsoft.VisualStudio.Package.Source src = GetSource(LastActiveTextView);
             if (src != null && src.LastParseTime >= Int32.MaxValue >> 12)
             {
                 src.LastParseTime = 0;
@@ -76,7 +79,7 @@ namespace Visor.LanguageService
         public override Microsoft.VisualStudio.Package.AuthoringScope ParseSource(ParseRequest req)
         {
             Debug.Print("ParseSource at ({0}:{1}), reason {2}", req.Line, req.Col, req.Reason);
-            var source = (Source)GetSource(req.FileName);
+            var source = (Source) GetSource(req.FileName);
             var scope = new AuthoringScope(source);
 
             try
@@ -87,12 +90,12 @@ namespace Visor.LanguageService
                         // This is where you perform your syntax highlighting.
                         // Parse entire source as given in req.Text.
                         // Store results in the AuthoringScope object.
-                        var node = _parser.Parse(req.Text, req.FileName).Root;
+                        ParseTreeNode node = _parser.Parse(req.Text, req.FileName).Root;
                         source.ParseResult = node;
 
                         // Used for brace matching.
-                        var braces = _parser.Context.OpenBraces;
-                        foreach (var brace in braces)
+                        TokenStack braces = _parser.Context.OpenBraces;
+                        foreach (Token brace in braces)
                         {
                             var openBrace = new TextSpan
                                 {
@@ -121,7 +124,7 @@ namespace Visor.LanguageService
 
                         if (_parser.Context.CurrentParseTree.ParserMessages.Count > 0)
                         {
-                            foreach (var error in _parser.Context.CurrentParseTree.ParserMessages)
+                            foreach (LogMessage error in _parser.Context.CurrentParseTree.ParserMessages)
                             {
                                 var span = new TextSpan();
                                 span.iStartLine = span.iEndLine = error.Location.Line;
@@ -158,7 +161,7 @@ namespace Visor.LanguageService
                     case ParseReason.MemberSelectAndHighlightBraces:
                         if (source.Braces != null)
                         {
-                            foreach (TextSpan[] brace in source.Braces)
+                            foreach (var brace in source.Braces)
                             {
                                 if (brace.Length == 2)
                                     req.Sink.MatchPair(brace[0], brace[1], 1);
@@ -169,48 +172,50 @@ namespace Visor.LanguageService
                         break;
                 }
             }
-            catch{}// eat exceptions as there isn't a reliable way to handle them
+            catch
+            {
+            } // eat exceptions as there isn't a reliable way to handle them
 
             return scope;
         }
 
         /// <summary>
-        /// Called to determine if the given location can have a breakpoint applied to it. 
+        ///     Called to determine if the given location can have a breakpoint applied to it.
         /// </summary>
         /// <param name="buffer">The IVsTextBuffer object containing the source file.</param>
         /// <param name="line">The line number where the breakpoint is to be set.</param>
         /// <param name="col">The offset into the line where the breakpoint is to be set.</param>
         /// <param name="pCodeSpan">
-        /// Returns the TextSpan giving the extent of the code affected by the breakpoint if the 
-        /// breakpoint can be set.
+        ///     Returns the TextSpan giving the extent of the code affected by the breakpoint if the
+        ///     breakpoint can be set.
         /// </param>
         /// <returns>
-        /// If successful, returns S_OK; otherwise returns S_FALSE if there is no code at the given 
-        /// position or returns an error code (the validation is deferred until the debug engine is loaded). 
+        ///     If successful, returns S_OK; otherwise returns S_FALSE if there is no code at the given
+        ///     position or returns an error code (the validation is deferred until the debug engine is loaded).
         /// </returns>
         /// <remarks>
-        /// <para>
-        /// CAUTION: Even if you do not intend to support the ValidateBreakpointLocation but your language 
-        /// does support breakpoints, you must override the ValidateBreakpointLocation method and return a 
-        /// span that contains the specified line and column; otherwise, breakpoints cannot be set anywhere 
-        /// except line 1. You can return E_NOTIMPL to indicate that you do not otherwise support this 
-        /// method but the span must always be set. The example shows how this can be done.
-        /// </para>
-        /// <para>
-        /// Since the language service parses the code, it generally knows what is considered code and what 
-        /// is not. Normally, the debug engine is loaded and the pending breakpoints are bound to the source. It is at this time the breakpoint location is validated. This method is a fast way to determine if a breakpoint can be set at a particular location without loading the debug engine.
-        /// </para>
-        /// <para>
-        /// You can implement this method to call the ParseSource method with the parse reason of CodeSpan. 
-        /// The parser examines the specified location and returns a span identifying the code at that 
-        /// location. If there is code at the location, the span identifying that code should be passed to 
-        /// your implementation of the CodeSpan method in your version of the AuthoringSink class. Then your 
-        /// implementation of the ValidateBreakpointLocation method retrieves that span from your version of 
-        /// the AuthoringSink class and returns that span in the pCodeSpan argument.
-        /// </para>
-        /// <para>
-        /// The base method returns E_NOTIMPL.
-        /// </para>
+        ///     <para>
+        ///         CAUTION: Even if you do not intend to support the ValidateBreakpointLocation but your language
+        ///         does support breakpoints, you must override the ValidateBreakpointLocation method and return a
+        ///         span that contains the specified line and column; otherwise, breakpoints cannot be set anywhere
+        ///         except line 1. You can return E_NOTIMPL to indicate that you do not otherwise support this
+        ///         method but the span must always be set. The example shows how this can be done.
+        ///     </para>
+        ///     <para>
+        ///         Since the language service parses the code, it generally knows what is considered code and what
+        ///         is not. Normally, the debug engine is loaded and the pending breakpoints are bound to the source. It is at this time the breakpoint location is validated. This method is a fast way to determine if a breakpoint can be set at a particular location without loading the debug engine.
+        ///     </para>
+        ///     <para>
+        ///         You can implement this method to call the ParseSource method with the parse reason of CodeSpan.
+        ///         The parser examines the specified location and returns a span identifying the code at that
+        ///         location. If there is code at the location, the span identifying that code should be passed to
+        ///         your implementation of the CodeSpan method in your version of the AuthoringSink class. Then your
+        ///         implementation of the ValidateBreakpointLocation method retrieves that span from your version of
+        ///         the AuthoringSink class and returns that span in the pCodeSpan argument.
+        ///     </para>
+        ///     <para>
+        ///         The base method returns E_NOTIMPL.
+        ///     </para>
         /// </remarks>
         public override int ValidateBreakpointLocation(IVsTextBuffer buffer, int line, int col, TextSpan[] pCodeSpan)
         {
@@ -240,11 +245,6 @@ namespace Visor.LanguageService
         public override ViewFilter CreateViewFilter(CodeWindowManager mgr, IVsTextView newView)
         {
             return new IronyViewFilter(mgr, newView);
-        }
-
-        public override string Name
-        {
-            get { return Configuration.Name; }
         }
 
         public override string GetFormatFilterList()

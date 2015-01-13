@@ -4,14 +4,6 @@ namespace Visor.LanguageService
 {
     public struct Declaration : IComparable<Declaration>
     {
-        public Declaration(string description, string displayText, int glyph, string name)
-        {
-            this.Description = description;
-            this.DisplayText = displayText;
-            this.Glyph = glyph;
-            this.Name = name;
-        }
-
         public string Description;
         public string DisplayText;
         public int Glyph;
@@ -25,5 +17,13 @@ namespace Visor.LanguageService
         }
 
         #endregion
+
+        public Declaration(string description, string displayText, int glyph, string name)
+        {
+            Description = description;
+            DisplayText = displayText;
+            Glyph = glyph;
+            Name = name;
+        }
     }
 }

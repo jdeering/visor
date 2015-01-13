@@ -10,14 +10,14 @@ namespace Visor.LanguageService
         public IronyViewFilter(CodeWindowManager mgr, IVsTextView view)
             : base(mgr, view)
         {
-
         }
 
-        public override void HandlePostExec(ref Guid guidCmdGroup, uint nCmdId, uint nCmdexecopt, IntPtr pvaIn, IntPtr pvaOut, bool bufferWasChanged)
+        public override void HandlePostExec(ref Guid guidCmdGroup, uint nCmdId, uint nCmdexecopt, IntPtr pvaIn,
+                                            IntPtr pvaOut, bool bufferWasChanged)
         {
-            if (guidCmdGroup == typeof(VSConstants.VSStd2KCmdID).GUID)
+            if (guidCmdGroup == typeof (VSConstants.VSStd2KCmdID).GUID)
             {
-                VSConstants.VSStd2KCmdID cmd = (VSConstants.VSStd2KCmdID)nCmdId;
+                var cmd = (VSConstants.VSStd2KCmdID) nCmdId;
                 switch (cmd)
                 {
                     case VSConstants.VSStd2KCmdID.UP:

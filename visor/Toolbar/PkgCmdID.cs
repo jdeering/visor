@@ -1,10 +1,9 @@
 ﻿// PkgCmdID.cs
 // MUST match PkgCmdID.h
-using System;
 
 namespace Visor.Toolbar
 {
-    static class PkgCmdIDList
+    internal static class PkgCmdIDList
     {
         public const uint Upload = 0x100;
         public const uint Download = 0x200;

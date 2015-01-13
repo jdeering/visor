@@ -4,16 +4,16 @@ namespace Visor.LanguageService
 {
     public struct Method
     {
-        public string Name;
         public string Description;
-        public string Type;
+        public string Name;
         public IList<Parameter> Parameters;
+        public string Type;
     }
 
     public struct Parameter
     {
-        public string Name;
-        public string Display;
         public string Description;
+        public string Display;
+        public string Name;
     }
 }

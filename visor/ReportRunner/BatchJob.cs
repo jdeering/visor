@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -11,10 +9,9 @@ namespace Visor.ReportRunner
 {
     public class BatchJob : INotifyPropertyChanged
     {
+        private ReportList _reports;
         private int _sequence;
         private string _status;
-        private string _fileName;
-        private ReportList _reports;
 
         public SymDirectory Directory { get; set; }
 
@@ -29,13 +26,10 @@ namespace Visor.ReportRunner
             }
         }
 
-        public string FileName
-        {
-            get { return _fileName; }
-            set { _fileName = value; }
-        }
+        public string FileName { get; set; }
 
         public DateTime RunTime { get; set; }
+
         public string Status
         {
             get { return _status; }

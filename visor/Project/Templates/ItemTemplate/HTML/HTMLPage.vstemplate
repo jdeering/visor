@@ -1,6 +1,7 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8"?>
+
 <VSTemplate Type="Item" Version="3.0.0"
-    xmlns="http://schemas.microsoft.com/developer/vstemplate/2005">
+            xmlns="http://schemas.microsoft.com/developer/vstemplate/2005">
   <TemplateData>
     <Name>HTML</Name>
     <Description>Creates a HTML Letter File</Description>

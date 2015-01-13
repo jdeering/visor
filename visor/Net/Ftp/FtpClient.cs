@@ -10,26 +10,28 @@ namespace Visor.Net.Ftp
         private ILogin _login;
         private ETransferMode _transferMode;
 
+        public FtpClient(IConnectionInformation connectionInfo, ILogin login)
+        {
+            _connection = connectionInfo;
+            _login = login;
+        }
+
         public IConnectionInformation ConnectionInformation
         {
             get { return _connection; }
-            set { _connection = value;  }
+            set { _connection = value; }
         }
+
         public ILogin Login
         {
             get { return _login; }
             set { _login = value; }
         }
+
         public ETransferMode TransferMode
         {
             get { return _transferMode; }
             set { _transferMode = value; }
-        }
-
-        public FtpClient(IConnectionInformation connectionInfo, ILogin login)
-        {
-            _connection = connectionInfo;
-            _login = login;
         }
 
         public bool Download(string source, string destination)
@@ -38,7 +40,8 @@ namespace Visor.Net.Ftp
             var credential = new NetworkCredential(_login.Username, _login.Password);
             using (var client = new FTPSClient())
             {
-                client.Connect(_connection.Server, _connection.Port, credential, ESSLSupportMode.ClearText, null, null, 0, 0, 0, null);
+                client.Connect(_connection.Server, _connection.Port, credential, ESSLSupportMode.ClearText, null, null,
+                               0, 0, 0, null);
                 client.SetTransferMode(_transferMode);
                 // Download a file
                 bytesRead = client.GetFile(source, destination);
@@ -53,7 +56,8 @@ namespace Visor.Net.Ftp
             var credential = new NetworkCredential(_login.Username, _login.Password);
             using (var client = new FTPSClient())
             {
-                client.Connect(_connection.Server, _connection.Port, credential, ESSLSupportMode.ClearText, null, null, 0, 0, 0, null);
+                client.Connect(_connection.Server, _connection.Port, credential, ESSLSupportMode.ClearText, null, null,
+                               0, 0, 0, null);
                 client.SetTransferMode(_transferMode);
                 // Upload a file
                 bytesPut = client.PutFile(source, destination);
@@ -67,7 +71,8 @@ namespace Visor.Net.Ftp
             var credential = new NetworkCredential(_login.Username, _login.Password);
             using (var client = new FTPSClient())
             {
-                client.Connect(_connection.Server, _connection.Port, credential, ESSLSupportMode.ClearText, null, null, 0, 0, 0, null);
+                client.Connect(_connection.Server, _connection.Port, credential, ESSLSupportMode.ClearText, null, null,
+                               0, 0, 0, null);
                 client.SendCustomCommand(command);
             }
         }
@@ -77,7 +82,8 @@ namespace Visor.Net.Ftp
             var credential = new NetworkCredential(_login.Username, _login.Password);
             using (var client = new FTPSClient())
             {
-                client.Connect(_connection.Server, _connection.Port, credential, ESSLSupportMode.ClearText, null, null, 0, 0, 0, null);
+                client.Connect(_connection.Server, _connection.Port, credential, ESSLSupportMode.ClearText, null, null,
+                               0, 0, 0, null);
                 return client.GetFile(path) != null;
             }
         }

@@ -1,11 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Visor.Options
@@ -21,7 +15,7 @@ namespace Visor.Options
 
         public void Initialize()
         {
-            foreach (var d in Options.Directories)
+            foreach (SymDirectory d in Options.Directories)
             {
                 directoryList.Items.Add(d);
             }
@@ -42,7 +36,7 @@ namespace Visor.Options
         {
             try
             {
-                SymServerInfo serverInfo = new SymServerInfo
+                var serverInfo = new SymServerInfo
                     {
                         Host = host.Text,
                         TelnetPort = int.Parse(telnet.Text),
@@ -51,15 +45,16 @@ namespace Visor.Options
                         AixPassword = password.Text
                     };
 
-                SymDirectory newDirectory = new SymDirectory
+                var newDirectory = new SymDirectory
                     {
                         Server = serverInfo,
                         Institution = int.Parse(directory.Text),
                         UserId = userId.Text
                     };
 
-                var existingDirectory =
-                    Options.Directories.FirstOrDefault(x => x.Institution == newDirectory.Institution && x.Server.Host == serverInfo.Host);
+                SymDirectory existingDirectory =
+                    Options.Directories.FirstOrDefault(
+                        x => x.Institution == newDirectory.Institution && x.Server.Host == serverInfo.Host);
 
                 if (existingDirectory == null)
                 {
@@ -68,7 +63,7 @@ namespace Visor.Options
                 }
                 else
                 {
-                    var index = Options.Directories.IndexOf(existingDirectory);
+                    int index = Options.Directories.IndexOf(existingDirectory);
                     Options.Directories[index] = newDirectory;
                 }
             }
@@ -80,11 +75,11 @@ namespace Visor.Options
 
         private void deleteButton_Click(object sender, EventArgs e)
         {
-            var selectedDirectories = directoryList.SelectedItems;
+            ListBox.SelectedObjectCollection selectedDirectories = directoryList.SelectedItems;
 
             for (int i = 0; i < selectedDirectories.Count; i++)
             {
-                var d = (SymDirectory)selectedDirectories[i];
+                var d = (SymDirectory) selectedDirectories[i];
                 directoryList.Items.Remove(d);
                 Options.Directories.Remove(d);
             }
@@ -96,23 +91,23 @@ namespace Visor.Options
         {
             if (directoryList.SelectedItems.Count == 1)
             {
-                var symDirectory = (SymDirectory)directoryList.SelectedItem;
+                var symDirectory = (SymDirectory) directoryList.SelectedItem;
 
-                this.host.Text = symDirectory.Server.Host;
-                this.telnet.Text = symDirectory.Server.TelnetPort.ToString();
-                this.ftp.Text = symDirectory.Server.FtpPort.ToString();
+                host.Text = symDirectory.Server.Host;
+                telnet.Text = symDirectory.Server.TelnetPort.ToString();
+                ftp.Text = symDirectory.Server.FtpPort.ToString();
 
-                this.username.Text = symDirectory.Server.AixUsername;
-                this.password.Text = symDirectory.Server.AixPassword;
+                username.Text = symDirectory.Server.AixUsername;
+                password.Text = symDirectory.Server.AixPassword;
 
-                this.directory.Text = symDirectory.Institution.ToString();
-                this.userId.Text = symDirectory.UserId;
+                directory.Text = symDirectory.Institution.ToString();
+                userId.Text = symDirectory.UserId;
             }
         }
 
         private void ClearFields()
         {
-            foreach (TextBox field in this.Controls.OfType<TextBox>())
+            foreach (TextBox field in Controls.OfType<TextBox>())
             {
                 field.Text = "";
             }

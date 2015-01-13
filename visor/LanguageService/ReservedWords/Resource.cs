@@ -8,9 +8,12 @@ namespace Visor.LanguageService.ReservedWords
     {
         public static Stream GetStream(string filename)
         {
-            var names = Assembly.GetExecutingAssembly().GetManifestResourceNames();
+            string[] names = Assembly.GetExecutingAssembly().GetManifestResourceNames();
 
-            return (from name in names where name.Contains(filename) select Assembly.GetExecutingAssembly().GetManifestResourceStream(name)).FirstOrDefault();
+            return
+                (from name in names
+                 where name.Contains(filename)
+                 select Assembly.GetExecutingAssembly().GetManifestResourceStream(name)).FirstOrDefault();
         }
     }
 }

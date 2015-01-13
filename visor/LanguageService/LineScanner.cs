@@ -1,10 +1,8 @@
 using System;
-using System.Linq;
-using Visor.LanguageService.ReservedWords;
-using Microsoft.VisualStudio.Package;
 using Irony.Parsing;
-using Microsoft.VisualStudio.TextManager.Interop;
+using Microsoft.VisualStudio.Package;
 using TokenColor = Microsoft.VisualStudio.Package.TokenColor;
+using TokenTriggers = Microsoft.VisualStudio.Package.TokenTriggers;
 using TokenType = Microsoft.VisualStudio.Package.TokenType;
 
 namespace Visor.LanguageService
@@ -28,7 +26,7 @@ namespace Visor.LanguageService
         {
             // Reads each token in a source line and performs syntax coloring.  It will continue to
             // be called for the source until false is returned.
-            var token = _parser.Scanner.VsReadToken(ref state);
+            Token token = _parser.Scanner.VsReadToken(ref state);
 
             if (token != null && token.Category != TokenCategory.Error)
             {
@@ -42,28 +40,28 @@ namespace Visor.LanguageService
                 }
                 else
                 {
-                    tokenInfo.Color = (TokenColor)token.EditorInfo.Color;
-                    tokenInfo.Type = (TokenType)token.EditorInfo.Type;
+                    tokenInfo.Color = (TokenColor) token.EditorInfo.Color;
+                    tokenInfo.Type = (TokenType) token.EditorInfo.Type;
                     if (token.KeyTerm != null)
                     {
                         tokenInfo.Trigger =
-                            (Microsoft.VisualStudio.Package.TokenTriggers)token.KeyTerm.EditorInfo.Triggers;
+                            (TokenTriggers) token.KeyTerm.EditorInfo.Triggers;
                     }
                     else
                     {
                         tokenInfo.Trigger =
-                            (Microsoft.VisualStudio.Package.TokenTriggers)token.EditorInfo.Triggers;
+                            (TokenTriggers) token.EditorInfo.Triggers;
                     }
                 }
 
-                var c = token.Text[0];
+                char c = token.Text[0];
                 if (Char.IsPunctuation(c))
                 {
                     HandlePunctuation(tokenInfo, token);
                 }
                 else if (tokenInfo.Type == TokenType.Identifier)
                 {
-                    tokenInfo.Trigger |= Microsoft.VisualStudio.Package.TokenTriggers.MemberSelect;
+                    tokenInfo.Trigger |= TokenTriggers.MemberSelect;
                 }
 
                 return true;
@@ -74,26 +72,26 @@ namespace Visor.LanguageService
 
         private void HandlePunctuation(TokenInfo tokenInfo, Token token)
         {
-            var c = token.ToString()[0];
+            char c = token.ToString()[0];
             switch (c)
             {
                 case ':':
-                    tokenInfo.Trigger |= Microsoft.VisualStudio.Package.TokenTriggers.MemberSelect;
+                    tokenInfo.Trigger |= TokenTriggers.MemberSelect;
                     break;
                 case '(':
-                    tokenInfo.Trigger |= Microsoft.VisualStudio.Package.TokenTriggers.ParameterStart;
+                    tokenInfo.Trigger |= TokenTriggers.ParameterStart;
                     break;
                 case ')':
-                    tokenInfo.Trigger |= Microsoft.VisualStudio.Package.TokenTriggers.ParameterEnd;
+                    tokenInfo.Trigger |= TokenTriggers.ParameterEnd;
                     break;
                 case ',':
-                    tokenInfo.Trigger |= Microsoft.VisualStudio.Package.TokenTriggers.ParameterNext;
+                    tokenInfo.Trigger |= TokenTriggers.ParameterNext;
                     break;
             }
 
             if ("()".IndexOf(c) != -1)
             {
-                tokenInfo.Trigger |= Microsoft.VisualStudio.Package.TokenTriggers.MatchBraces;
+                tokenInfo.Trigger |= TokenTriggers.MatchBraces;
             }
         }
     }

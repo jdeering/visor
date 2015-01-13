@@ -15,7 +15,8 @@ namespace Visor.LanguageService
 {
     public class Declarations : Microsoft.VisualStudio.Package.Declarations
     {
-        IList<Declaration> declarations;
+        private readonly IList<Declaration> declarations;
+
         public Declarations(IList<Declaration> declarations)
         {
             this.declarations = declarations;

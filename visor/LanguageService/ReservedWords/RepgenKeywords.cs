@@ -6,6 +6,7 @@ namespace Visor.LanguageService.ReservedWords
     public static class RepgenKeywords
     {
         private static List<string> _list;
+
         public static List<string> List
         {
             get
@@ -18,7 +19,7 @@ namespace Visor.LanguageService.ReservedWords
 
         public static void LoadFile()
         {
-            var stream = Resource.GetStream("keywords.txt");
+            Stream stream = Resource.GetStream("keywords.txt");
             if (stream == null) return;
 
             _list = new List<string>();
@@ -26,10 +27,10 @@ namespace Visor.LanguageService.ReservedWords
             {
                 while (reader.Peek() >= 0)
                 {
-                    var line = reader.ReadLine();
+                    string line = reader.ReadLine();
                     if (string.IsNullOrEmpty(line)) continue;
 
-                    var tokens = line.Trim().Split('|');
+                    string[] tokens = line.Trim().Split('|');
                     _list.Add(tokens[0].Trim().ToLower());
                 }
             }

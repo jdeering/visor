@@ -2,12 +2,12 @@
 using System.IO;
 using System.Linq;
 
-
 namespace Visor.LanguageService.ReservedWords
 {
     public static class RepgenFunctions
     {
         private static List<Function> _list;
+
         public static List<Function> List
         {
             get
@@ -20,7 +20,7 @@ namespace Visor.LanguageService.ReservedWords
 
         public static void LoadFile()
         {
-            var stream = Resource.GetStream("functions.txt");
+            Stream stream = Resource.GetStream("functions.txt");
             if (stream == null) return;
 
             _list = new List<Function>();
@@ -28,12 +28,12 @@ namespace Visor.LanguageService.ReservedWords
             {
                 while (reader.Peek() >= 0)
                 {
-                    var line = reader.ReadLine();
+                    string line = reader.ReadLine();
                     if (string.IsNullOrEmpty(line.Trim())) continue;
 
                     if (line.StartsWith("\t"))
                     {
-                        var tokens = line.Trim().Split('|');
+                        string[] tokens = line.Trim().Split('|');
 
                         _list.Last().Parameters.Add(new FunctionParameter
                             {
@@ -45,22 +45,22 @@ namespace Visor.LanguageService.ReservedWords
                     {
                         if (line.Contains("|"))
                         {
-                            var tokens = line.Trim().Split('|');
+                            string[] tokens = line.Trim().Split('|');
                             _list.Add(new Function
-                            {
-                                Name = tokens[0],
-                                Description = tokens[1],
-                                ReturnTypes = tokens[2],
-                                Parameters = new List<FunctionParameter>()
-                            });
+                                {
+                                    Name = tokens[0],
+                                    Description = tokens[1],
+                                    ReturnTypes = tokens[2],
+                                    Parameters = new List<FunctionParameter>()
+                                });
                         }
                         else
                         {
                             _list.Add(new Function
-                            {
-                                Name = line.Trim(),
-                                Parameters = new List<FunctionParameter>()
-                            });
+                                {
+                                    Name = line.Trim(),
+                                    Parameters = new List<FunctionParameter>()
+                                });
                         }
                     }
                 }
@@ -70,15 +70,15 @@ namespace Visor.LanguageService.ReservedWords
 
     public struct Function
     {
-        public string Name;
         public string Description;
-        public string ReturnTypes;
+        public string Name;
         public List<FunctionParameter> Parameters;
+        public string ReturnTypes;
     }
 
     public struct FunctionParameter
     {
-        public string Name;
         public string Description;
+        public string Name;
     }
 }

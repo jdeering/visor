@@ -1,22 +1,22 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.VisualStudio;
-using Microsoft.VisualStudio.TextManager.Interop;
 using Microsoft.VisualStudio.Package;
+using Microsoft.VisualStudio.TextManager.Interop;
 
 namespace Visor.LanguageService
 {
     public class AuthoringScope : Microsoft.VisualStudio.Package.AuthoringScope
     {
-        private Source _source;
-        readonly IAstResolver _resolver;
+        private readonly IAstResolver _resolver;
+        private readonly Source _source;
 
         public AuthoringScope(Source source)
         {
             _source = source;
             _resolver = new Resolver();
         }
-        
+
         // ParseReason.QuickInfo
         public override string GetDataTipText(int line, int col, out TextSpan span)
         {
@@ -28,7 +28,8 @@ namespace Visor.LanguageService
         // ParseReason.DisplayMemberList
         // ParseReason.MemberSelect
         // ParseReason.MemberSelectAndHilightBraces
-        public override Microsoft.VisualStudio.Package.Declarations GetDeclarations(IVsTextView view, int line, int col, TokenInfo info, ParseReason reason)
+        public override Microsoft.VisualStudio.Package.Declarations GetDeclarations(IVsTextView view, int line, int col,
+                                                                                    TokenInfo info, ParseReason reason)
         {
             IList<Declaration> declarations;
             switch (reason)
@@ -55,7 +56,8 @@ namespace Visor.LanguageService
         }
 
         // ParseReason.Goto
-        public override string Goto(VSConstants.VSStd97CmdID cmd, IVsTextView textView, int line, int col, out TextSpan span)
+        public override string Goto(VSConstants.VSStd97CmdID cmd, IVsTextView textView, int line, int col,
+                                    out TextSpan span)
         {
             span = new TextSpan();
             return null;

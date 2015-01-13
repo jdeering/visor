@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.VisualStudio.Shell;
+﻿using Microsoft.VisualStudio.Shell;
 
 namespace Visor.ReportRunner
 {
     internal sealed class ReportToolWindow : ToolWindowPane
     {
-        private ReportRunnerControl _control;
+        private readonly ReportRunnerControl _control;
 
         public ReportToolWindow() : base(null)
         {

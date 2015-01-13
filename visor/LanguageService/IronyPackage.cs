@@ -1,28 +1,30 @@
 ﻿using System;
-using System.Runtime.InteropServices;
-using Visor.LanguageService.ReservedWords;
-using Microsoft.VisualStudio.OLE.Interop;
 using System.ComponentModel.Design;
-using Microsoft.VisualStudio.Shell;
+using System.Runtime.InteropServices;
+using Microsoft.VisualStudio.OLE.Interop;
+using Microsoft.VisualStudio.Project;
+using Visor.LanguageService.ReservedWords;
 
 namespace Visor.LanguageService
 {
-    public class IronyPackage : Microsoft.VisualStudio.Project.ProjectPackage, IOleComponent
+    public class IronyPackage : ProjectPackage, IOleComponent
     {
-        uint _componentId;
+        private uint _componentId;
 
         #region ProjectPackage components
+
         public override string ProductUserContext
         {
             get { return null; }
         }
+
         #endregion
 
         protected override void Initialize()
         {
             base.Initialize();
             var container = this as IServiceContainer;
-            container.AddService(typeof(IronyLanguageService), ProfferLanguageService, true);
+            container.AddService(typeof (IronyLanguageService), ProfferLanguageService, true);
 
             SymitarDatabase.LoadFile();
             RepgenKeywords.LoadFile();
@@ -33,7 +35,7 @@ namespace Visor.LanguageService
         private IronyLanguageService ProfferLanguageService(IServiceContainer container, Type serviceType)
         {
             IronyLanguageService languageService = null;
-            if (typeof(IronyLanguageService) == serviceType)
+            if (typeof (IronyLanguageService) == serviceType)
             {
                 languageService = new IronyLanguageService();
                 languageService.SetSite(this);
@@ -45,16 +47,16 @@ namespace Visor.LanguageService
         private void RegisterIdleCallback()
         {
             // register for idle time callbacks
-            var mgr = GetService(typeof(SOleComponentManager)) as IOleComponentManager;
+            var mgr = GetService(typeof (SOleComponentManager)) as IOleComponentManager;
             if (_componentId == 0 && mgr != null)
             {
                 var crinfo = new OLECRINFO[1];
-                crinfo[0].cbSize = (uint)Marshal.SizeOf(typeof(OLECRINFO));
-                crinfo[0].grfcrf = (uint)_OLECRF.olecrfNeedIdleTime |
-                                              (uint)_OLECRF.olecrfNeedPeriodicIdleTime;
-                crinfo[0].grfcadvf = (uint)_OLECADVF.olecadvfModal |
-                                              (uint)_OLECADVF.olecadvfRedrawOff |
-                                              (uint)_OLECADVF.olecadvfWarningsOff;
+                crinfo[0].cbSize = (uint) Marshal.SizeOf(typeof (OLECRINFO));
+                crinfo[0].grfcrf = (uint) _OLECRF.olecrfNeedIdleTime |
+                                   (uint) _OLECRF.olecrfNeedPeriodicIdleTime;
+                crinfo[0].grfcadvf = (uint) _OLECADVF.olecadvfModal |
+                                     (uint) _OLECADVF.olecadvfRedrawOff |
+                                     (uint) _OLECADVF.olecadvfWarningsOff;
                 crinfo[0].uIdleTimeInterval = 1000;
                 mgr.FRegisterComponent(this, crinfo, out _componentId);
             }
@@ -66,7 +68,7 @@ namespace Visor.LanguageService
             {
                 if (_componentId != 0)
                 {
-                    var mgr = GetService(typeof(SOleComponentManager)) as IOleComponentManager;
+                    var mgr = GetService(typeof (SOleComponentManager)) as IOleComponentManager;
                     if (mgr != null)
                     {
                         mgr.FRevokeComponent(_componentId);
@@ -81,6 +83,7 @@ namespace Visor.LanguageService
         }
 
         #region IOleComponent Members
+
         public int FContinueMessageLoop(uint uReason, IntPtr pvLoopData, MSG[] pMsgPeeked)
         {
             return 1;
@@ -88,11 +91,11 @@ namespace Visor.LanguageService
 
         public int FDoIdle(uint grfidlef)
         {
-            var ls = GetService(typeof(IronyLanguageService)) as IronyLanguageService;
+            var ls = GetService(typeof (IronyLanguageService)) as IronyLanguageService;
 
             if (ls != null)
             {
-                ls.OnIdle((grfidlef & (uint)_OLEIDLEF.oleidlefPeriodic) != 0);
+                ls.OnIdle((grfidlef & (uint) _OLEIDLEF.oleidlefPeriodic) != 0);
             }
 
             return 0;
@@ -118,7 +121,8 @@ namespace Visor.LanguageService
             return IntPtr.Zero;
         }
 
-        public void OnActivationChange(IOleComponent pic, int fSameComponent, OLECRINFO[] pcrinfo, int fHostIsActivating, OLECHOSTINFO[] pchostinfo, uint dwReserved)
+        public void OnActivationChange(IOleComponent pic, int fSameComponent, OLECRINFO[] pcrinfo, int fHostIsActivating,
+                                       OLECHOSTINFO[] pchostinfo, uint dwReserved)
         {
         }
 
@@ -137,6 +141,7 @@ namespace Visor.LanguageService
         public void Terminate()
         {
         }
+
         #endregion
     }
 }

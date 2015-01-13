@@ -16,7 +16,6 @@ using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Ninject;
-using Ninject.Modules;
 using Symitar;
 using Visor.Extensions;
 using Visor.LanguageService;
@@ -595,14 +594,6 @@ namespace Visor
             Application.Current.Dispatcher.Invoke(
                 DispatcherPriority.Normal,
                 action);
-        }
-    }
-
-    public class ServiceModule : NinjectModule
-    {
-        public override void Load()
-        {
-            Bind<ICryptoService>().To<EmbeddedCryptoService>();
         }
     }
 }

@@ -4,43 +4,21 @@ using System.Security.Cryptography;
 
 namespace Visor.Lib
 {
-    public interface ICryptoService
+    public static class CryptoTools
     {
-        byte[] Encrypt(string s);
-        string Decrypt(byte[] b);
-    }
-
-    public class EmbeddedCryptoService : ICryptoService
-    {
-        public byte[] Encrypt(string s)
+        public static byte[] Encrypt(string s, byte[] key, byte[] iv)
         {
-            return CryptoTools.Encrypt(s);
-        }
+            if (string.IsNullOrEmpty(s)) return new byte[0];
+            if (key == null || key.Length == 0) throw new ArgumentException("Invalid Encryption Key", "key");
+            if (iv == null || iv.Length == 0) throw new ArgumentException("Invalid Initialization Vector", "iv");
 
-        public string Decrypt(byte[] b)
-        {
-            return CryptoTools.Decrypt(b);
-        }
-    }
-
-    internal static class CryptoTools
-    {
-        private static readonly string KeyFilePath =
-            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Visor", "Key.pkf");
-
-        private static readonly string IVFilePath =
-            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Visor", "IV.pkf");
-
-        public static byte[] Encrypt(string s)
-        {
             using (var rj = new RijndaelManaged())
             {
                 rj.KeySize = 128;
-                rj.Key = GetPrivateKey();
-                rj.IV = GetPrivateIV();
+                rj.Key = key;
+                rj.IV = iv;
 
-                ICryptoTransform encryptor = rj.CreateEncryptor(rj.Key, rj.IV);
-                byte[] encrypted;
+                var encryptor = rj.CreateEncryptor(rj.Key, rj.IV);
                 using (var ms = new MemoryStream())
                 {
                     using (var cs = new CryptoStream(ms, encryptor, CryptoStreamMode.Write))
@@ -48,79 +26,40 @@ namespace Visor.Lib
                         using (var sw = new StreamWriter(cs))
                         {
                             sw.Write(s);
+                            sw.Close();
                         }
-                        encrypted = ms.ToArray();
+                        return ms.ToArray();
                     }
                 }
-
-                return encrypted;
             }
         }
 
-        public static string Decrypt(byte[] data)
+        public static string Decrypt(byte[] data, byte[] key, byte[] iv)
         {
-            if (!File.Exists(KeyFilePath) || !File.Exists(IVFilePath))
-            {
-                throw new FileNotFoundException("Missing private key file");
-            }
+            if (data.Length == 0) return "";
+            if (key == null || key.Length == 0) throw new ArgumentException("Invalid Encryption Key", "key");
+            if (iv == null || iv.Length == 0) throw new ArgumentException("Invalid Initialization Vector", "iv");
 
             using (var rj = new RijndaelManaged())
             {
                 rj.KeySize = 128;
-                rj.Key = GetPrivateKey();
-                rj.IV = GetPrivateIV();
+                rj.Key = key;
+                rj.IV = iv;
 
-                ICryptoTransform decryptor = rj.CreateDecryptor(rj.Key, rj.IV);
-                string decrypted;
+                var decryptor = rj.CreateDecryptor(rj.Key, rj.IV);
                 using (var ms = new MemoryStream(data))
                 {
                     using (var cs = new CryptoStream(ms, decryptor, CryptoStreamMode.Read))
                     {
                         using (var sr = new StreamReader(cs))
                         {
-                            decrypted = sr.ReadToEnd();
+                            var result = sr.ReadToEnd();
                             sr.Close();
+                            return result;
                         }
                     }
                 }
-                return decrypted;
             }
-        }
-
-        private static byte[] GetPrivateKey()
-        {
-            if (!File.Exists(KeyFilePath))
-            {
-                using (var rj = new RijndaelManaged())
-                {
-                    rj.KeySize = 128;
-                    rj.GenerateKey();
-
-                    string fileData = Convert.ToBase64String(rj.Key);
-
-                    File.WriteAllText(KeyFilePath, fileData);
-                }
-            }
-
-            return Convert.FromBase64String(File.ReadAllText(KeyFilePath));
-        }
-
-        private static byte[] GetPrivateIV()
-        {
-            if (!File.Exists(IVFilePath))
-            {
-                using (var rj = new RijndaelManaged())
-                {
-                    rj.KeySize = 128;
-                    rj.GenerateIV();
-
-                    string fileData = Convert.ToBase64String(rj.IV);
-
-                    File.WriteAllText(IVFilePath, fileData);
-                }
-            }
-
-            return Convert.FromBase64String(File.ReadAllText(IVFilePath));
         }
     }
 }

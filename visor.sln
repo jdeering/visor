@@ -22,6 +22,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Visor.Lib", "Visor.Lib\Viso
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Visor.Lib.Tests", "Visor.Lib.Tests\Visor.Lib.Tests.csproj", "{23D3F4DF-AFD6-400D-9BA2-FAE3B584CCE4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Visor.Tests", "Visor.Tests\Visor.Tests.csproj", "{8A47C785-D3C6-4FF3-B377-3F5E716A9659}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -44,6 +46,10 @@ Global
 		{23D3F4DF-AFD6-400D-9BA2-FAE3B584CCE4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{23D3F4DF-AFD6-400D-9BA2-FAE3B584CCE4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{23D3F4DF-AFD6-400D-9BA2-FAE3B584CCE4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8A47C785-D3C6-4FF3-B377-3F5E716A9659}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8A47C785-D3C6-4FF3-B377-3F5E716A9659}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8A47C785-D3C6-4FF3-B377-3F5E716A9659}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8A47C785-D3C6-4FF3-B377-3F5E716A9659}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

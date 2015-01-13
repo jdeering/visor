@@ -178,6 +178,7 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Constants.cs" />
     <Compile Include="FileHandler.cs" />
     <Compile Include="Guids.cs" />
     <Compile Include="LanguageService\AuthoringScope.cs" />
@@ -222,6 +223,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="ServiceModule.cs" />
     <Compile Include="Toolbar\PkgCmdID.cs" />
     <Compile Include="VisorOptions.cs">
       <SubType>Component</SubType>

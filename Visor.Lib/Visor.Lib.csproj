@@ -54,6 +54,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CryptoTools.cs" />
+    <Compile Include="EmbeddedCryptoService.cs" />
+    <Compile Include="ICryptoService.cs" />
     <Compile Include="IFileSystem.cs" />
     <Compile Include="StringExtensions.cs" />
     <Compile Include="ConnectionInformation.cs" />
@@ -63,6 +65,7 @@
     <Compile Include="Interfaces\IConnectionInformation.cs" />
     <Compile Include="Interfaces\ILogin.cs" />
     <Compile Include="Login.cs" />
+    <Compile Include="StringTools.cs" />
     <Compile Include="SymDirectory.cs" />
     <Compile Include="SymServerInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

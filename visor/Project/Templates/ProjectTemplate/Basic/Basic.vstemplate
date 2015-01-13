@@ -1,0 +1,13 @@
+﻿<VSTemplate Type="Project" Version="2.0.0"
+    xmlns="http://schemas.microsoft.com/developer/vstemplate/2005">
+  <TemplateData>
+    <Name>Basic Project</Name>
+    <Description>A basic Symitar coding project</Description>
+    <ProjectType>Repgen</ProjectType>
+    <DefaultName>Project.symproj</DefaultName>
+  </TemplateData>
+  <TemplateContent>
+    <Project File="Basic.symproj">
+    </Project>
+  </TemplateContent>
+</VSTemplate>

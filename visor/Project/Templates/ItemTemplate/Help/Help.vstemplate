@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<VSTemplate Type="Item" Version="3.0.0"
+    xmlns="http://schemas.microsoft.com/developer/vstemplate/2005">
+  <TemplateData>
+    <Name>Help File</Name>
+    <Description>Creates a new Symitar Help File</Description>
+    <ProjectType>Repgen</ProjectType>
+    <DefaultName>HelpFile.hlp</DefaultName>
+    <ProvideDefaultName>true</ProvideDefaultName>
+    <SortOrder>500</SortOrder>
+  </TemplateData>
+  <TemplateContent>
+    <ProjectItem ReplaceParameters="true" TargetFileName="$fileinputname$.hlp">Helpfile.hlp</ProjectItem>
+  </TemplateContent>
+</VSTemplate>

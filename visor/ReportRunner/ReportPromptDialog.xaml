@@ -1,0 +1,18 @@
+﻿<platformUi:DialogWindow x:Class="Visor.ReportRunner.ReportPromptDialog"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:platformUi="clr-namespace:Microsoft.VisualStudio.PlatformUI;assembly=Microsoft.VisualStudio.Shell.12.0"
+             mc:Ignorable="d" MaxWidth="250">
+
+    <DockPanel x:Name="Container" Height="Auto" Width="Auto">
+        <Grid x:Name="Prompts" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+        </Grid>
+
+    </DockPanel>
+</platformUi:DialogWindow>

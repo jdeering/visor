@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Symitar;
+using Symitar.Interfaces;
 using Visor.Net.Ftp;
 using Visor.ReportRunner;
 
@@ -21,6 +22,7 @@ namespace Visor.Options
         private SymSession _session;
 
         private string[] ExtensionsToKeep;
+        private ISymSocket _socket;
 
         public bool LoggedIn
         {
@@ -48,6 +50,8 @@ namespace Visor.Options
             Institution = directory;
             UserId = userId;
 
+            _socket = new SymSocket(new SocketAdapter(), server.Host, server.TelnetPort);
+
             ExtensionsToKeep = new string[] { ".html" };
         }
 
@@ -58,7 +62,7 @@ namespace Visor.Options
 
         public void Connect()
         {
-            _session = new SymSession(Institution);
+            _session = new SymSession(_socket, Institution);
             _session.Connect(Server.Host, Server.TelnetPort);
             if (!_session.Login(Server.AixUsername, Server.AixPassword, UserId))
             {
@@ -83,7 +87,7 @@ namespace Visor.Options
 
         public bool FileExists(string path)
         {
-            FtpRequest request = new FtpRequest(Server.Host, Server.FtpPort, Server.AixUsername, Server.AixPassword);
+            var request = new FtpRequest(Server.Host, Server.FtpPort, Server.AixUsername, Server.AixPassword);
 
             var remoteFolder = Utilities.ContainingFolder(Institution, GetSymitarFileType(path));
             var remotePath = String.Format("{0}/{1}", remoteFolder, Path.GetFileNameWithoutExtension(path));
@@ -91,22 +95,22 @@ namespace Visor.Options
             return request.FileExists(remotePath);
         }
 
-        public void UploadFile(string path, Action<string> SuccessCallback, Action<FtpException> ErrorCallback)
+        public void UploadFile(string path, Action<string> successCallback, Action<FtpException> errorCallback)
         {
-            FtpRequest request = new FtpRequest(Server.Host, Server.FtpPort, Server.AixUsername, Server.AixPassword);
+            var request = new FtpRequest(Server.Host, Server.FtpPort, Server.AixUsername, Server.AixPassword);
 
             var destinationFolder = Utilities.ContainingFolder(Institution, GetSymitarFileType(path));
 
             request.Upload(
                 path,
                 String.Format("{0}/{1}", destinationFolder, Path.GetFileNameWithoutExtension(path)),
-                SuccessCallback,
-                ErrorCallback,
+                successCallback,
+                errorCallback,
                 FtpTransferType.Text
             );
         }
 
-        public void DownloadFile(string path, Action<string> SuccessCallback, Action<FtpException> ErrorCallback)
+        public void DownloadFile(string path, Action<string> successCallback, Action<FtpException> errorCallback)
         {
             FtpRequest request = new FtpRequest(Server.Host, Server.FtpPort, Server.AixUsername, Server.AixPassword);
 
@@ -115,13 +119,13 @@ namespace Visor.Options
             request.Download(
                 String.Format("{0}/{1}", sourceFolder, Path.GetFileNameWithoutExtension(path)),
                 path,                
-                SuccessCallback,
-                ErrorCallback,
+                successCallback,
+                errorCallback,
                 FtpTransferType.Text
             );
         }
 
-        public void Install(string path, Action<string, int> SuccessCallback, Action<string, string> ErrorCallback)
+        public void Install(string path, Action<string, int> successCallback, Action<string, string> errorCallback)
         {
             Symitar.File file = GetSymitarFile(path);
             SpecfileResult result;
@@ -135,17 +139,17 @@ namespace Visor.Options
             }
             catch (Exception e)
             {
-                ErrorCallback(file.Name, e.Message);
+                errorCallback(file.Name, e.Message);
                 return;
             }
 
             if (result.PassedCheck)
             {
-                SuccessCallback(file.Name, result.InstallSize);
+                successCallback(file.Name, result.InstallSize);
             }
             else
             {
-                ErrorCallback(file.Name, result.ErrorMessage);
+                errorCallback(file.Name, result.ErrorMessage);
             }
         }
 
@@ -181,7 +185,7 @@ namespace Visor.Options
             }
         }
 
-        public void Run(string fileName, List<string> promptAnswers, SymSession.FileRunStatus ProgressHandler, RunWorkerCompletedEventHandler JobCompletionHandler)
+        public void Run(string fileName, List<string> promptAnswers, SymSession.FileRunStatus progressHandler, RunWorkerCompletedEventHandler jobCompletionHandler)
         {
             var file = new Symitar.File() { Name = fileName, Type = FileType.RepGen };
             var currPrompt = 0;
@@ -190,10 +194,10 @@ namespace Visor.Options
                 Reset();
 
             _session.FileRun(file,
-                ProgressHandler, 
+                progressHandler, 
                 (prompt) => currPrompt < promptAnswers.Count ? promptAnswers[currPrompt++] : "", 
                 3,
-                JobCompletionHandler);
+                jobCompletionHandler);
         }
 
         public List<int> GetReportSequences(int batchOutputSequence)

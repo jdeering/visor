@@ -215,7 +215,7 @@
     <Compile Include="Options\OptionsControl.Designer.cs">
       <DependentUpon>OptionsControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="Options\SymDirectoryInfo.cs" />
+    <Compile Include="Options\SymDirectory.cs" />
     <Compile Include="Options\SymServerInfo.cs" />
     <Compile Include="Options\VisorOptions.cs">
       <SubType>Component</SubType>

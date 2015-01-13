@@ -14,7 +14,6 @@ namespace Visor.Tests
         public void Init()
         {
             _ninject = new StandardKernel(new ServiceModule());
-
         }
 
         [Test]

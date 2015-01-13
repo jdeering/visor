@@ -3,7 +3,7 @@
     only:
       - production
 
-  version: 2.0.{build}
+  version: 2.0.0
 
   configuration: Release
 
@@ -18,15 +18,15 @@
     - nuget restore
 
   build:
-    project: coveralls.net.sln
+    project: visor.sln
     verbosity: quiet
 
 -
   branches:
     only:
-      - master
+      - beta
 
-  version: 2.0.{build}-beta
+  version: 2.0.1-beta
 
   configuration: Debug
 
@@ -41,5 +41,28 @@
     - nuget restore
 
   build:
-    project: coveralls.net.sln
+    project: visor.sln
+    verbosity: minimal
+
+-
+  branches:
+    only:
+      - master
+
+  version: 2.0.1.{build}
+
+  configuration: Debug
+
+  assembly_info:
+    patch: true
+    file: AssemblyInfo.*
+    assembly_version: "{version}"
+    assembly_file_version: "{version}"
+    assembly_informational_version: "{version}"
+
+  install:
+    - nuget restore
+
+  build:
+    project: visor.sln
     verbosity: minimal

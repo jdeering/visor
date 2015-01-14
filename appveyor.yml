@@ -22,7 +22,15 @@
     verbosity: quiet
 
   artifacts:
-    - path: Visor\bin\%CONFIGURATION%\Visor.vsix
+    - path: visor\bin\$(configuration)\*.vsix
+      name: VsPackage
+
+  deploy:
+  - provider: GitHub
+    release: $(appveyor_build_version)
+    auth_token:
+      secure: OelvQ9JASXEQnzapY67bxJwmLIzuhi/XNgefjxySHUr0+Sc7hbLOiaRgvQcunRMe
+    artifact: VsPackage
 
 -
   branches:
@@ -48,7 +56,16 @@
     verbosity: quiet
 
   artifacts:
-    - path: Visor\bin\%CONFIGURATION%\Visor.vsix
+    - path: visor\bin\$(configuration)\*.vsix
+      name: VsPackage
+
+  deploy:
+  - provider: GitHub
+    release: $(appveyor_build_version)
+    auth_token:
+      secure: OelvQ9JASXEQnzapY67bxJwmLIzuhi/XNgefjxySHUr0+Sc7hbLOiaRgvQcunRMe
+    artifact: VsPackage
+    prerelease: true
 
 -
   branches:
@@ -77,6 +94,18 @@
     project: visor.sln
     verbosity: minimal
 
+  artifacts:
+    - path: visor\bin\$(configuration)\*.vsix
+      name: VsPackage
+
   after_test:
     - packages\OpenCover.4.5.3522\OpenCover.Console.exe -register:user -filter:"+[Visor*]* -[Visor.*Template*]*" -excludebyattribute:"ExcludeFromCodeCoverage" -hideskipped:All -target:"packages\NUnit.Runners.2.6.4\tools\nunit-console.exe" -targetargs:"/noshadow /domain:single Visor.Lib.Tests\bin\%CONFIGURATION%\Visor.Lib.Tests.dll Visor.Tests\bin\%CONFIGURATION%\Visor.Tests.dll" -output:coverage.xml
     - packages\coveralls.io.1.1.81\tools\coveralls.net.exe --opencover coverage.xml
+
+  deploy:
+  - provider: GitHub
+    release: $(appveyor_build_version)
+    auth_token:
+      secure: OelvQ9JASXEQnzapY67bxJwmLIzuhi/XNgefjxySHUr0+Sc7hbLOiaRgvQcunRMe
+    artifact: VsPackage
+    draft: true

@@ -22,7 +22,8 @@
     verbosity: quiet
 
   artifacts:
-    - path: Visor\bin\%CONFIGURATION%\*.vsix
+    - path: *.vsix
+	  name: VSPackages
 
 -
   branches:
@@ -45,17 +46,18 @@
 
   build:
     project: visor.sln
-    verbosity: quiet
+    verbosity: normal
 
   artifacts:
-    - path: Visor\bin\%CONFIGURATION%\*.vsix
+    - path: *.vsix
+	  name: VSPackages
 
 -
   branches:
     only:
       - master
 
-  version: 2.0.3-alpha.{build}
+  version: 2.0.5-alpha.{build}
 
   configuration: Debug
 

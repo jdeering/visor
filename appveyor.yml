@@ -1,111 +1,55 @@
-﻿-
-  branches:
-    only:
-      - production
+﻿
+branches:
+  only:
+    - master
+    - production
 
-  version: 2.0.6
+version: 2.0.6+{build}
 
-  configuration: Release
+configuration: Release
 
-  assembly_info:
-    patch: true
-    file: AssemblyInfo.*
-    assembly_version: "{version}"
-    assembly_file_version: "{version}"
-    assembly_informational_version: "{version}"
+environment:
+  COVERALLS_REPO_TOKEN:
+    secure: xJST635nD3XTmk90WxWxsVkfWuwJBU+ZZ+NLtlYvxn3Cw/AWEmDz6wwETllN1QXc
 
-  install:
-    - nuget restore
+assembly_info:
+  patch: true
+  file: AssemblyInfo.*
+  assembly_version: "{version}"
+  assembly_file_version: "{version}"
+  assembly_informational_version: "{version}"
 
-  build:
-    project: visor.sln
-    verbosity: quiet
+install:
+- nuget restore
 
-  artifacts:
-    - path: visor\bin\$(configuration)\*.vsix
-      name: VsPackage
+build:
+  project: visor.sln
+  verbosity: minimal
 
-  deploy:
-  - provider: GitHub
-    release: $(appveyor_build_version)
-    auth_token:
-      secure: OelvQ9JASXEQnzapY67bxJwmLIzuhi/XNgefjxySHUr0+Sc7hbLOiaRgvQcunRMe
-    artifact: VsPackage
+artifacts:
+  - path: visor\bin\$(configuration)\*.vsix
+    name: VsPackage
 
--
-  branches:
-    only:
-      - beta
+after_test:
+- packages\OpenCover.4.5.3522\OpenCover.Console.exe -register:user -filter:"+[Visor*]* -[Visor.*Template*]*" -excludebyattribute:"ExcludeFromCodeCoverage" -hideskipped:All -target:"packages\NUnit.Runners.2.6.4\tools\nunit-console.exe" -targetargs:"/noshadow /domain:single Visor.Lib.Tests\bin\%CONFIGURATION%\Visor.Lib.Tests.dll Visor.Tests\bin\%CONFIGURATION%\Visor.Tests.dll" -output:coverage.xml
+- packages\coveralls.io.1.1.81\tools\coveralls.net.exe --opencover coverage.xml
 
-  version: 2.0.7-beta
+deploy:
+- provider: GitHub
+  release: $(appveyor_repo_tag_name)
+  auth_token:
+    secure: OelvQ9JASXEQnzapY67bxJwmLIzuhi/XNgefjxySHUr0+Sc7hbLOiaRgvQcunRMe
+  artifact: VsPackage
+  prerelease: true
+  on:
+    branch: master
+    appveyor_repo_tag: true
 
-  configuration: Release
-
-  assembly_info:
-    patch: true
-    file: AssemblyInfo.*
-    assembly_version: "{version}"
-    assembly_file_version: "{version}"
-    assembly_informational_version: "{version}"
-
-  install:
-    - nuget restore
-
-  build:
-    project: visor.sln
-    verbosity: quiet
-
-  artifacts:
-    - path: visor\bin\$(configuration)\*.vsix
-      name: VsPackage
-
-  deploy:
-  - provider: GitHub
-    release: $(appveyor_build_version)
-    auth_token:
-      secure: OelvQ9JASXEQnzapY67bxJwmLIzuhi/XNgefjxySHUr0+Sc7hbLOiaRgvQcunRMe
-    artifact: VsPackage
-    prerelease: true
-
--
-  branches:
-    only:
-      - master
-
-  version: 2.0.7-alpha.{build}
-
-  configuration: Debug
-
-  environment:
-    COVERALLS_REPO_TOKEN:
-      secure: xJST635nD3XTmk90WxWxsVkfWuwJBU+ZZ+NLtlYvxn3Cw/AWEmDz6wwETllN1QXc
-
-  assembly_info:
-    patch: true
-    file: AssemblyInfo.*
-    assembly_version: "{version}"
-    assembly_file_version: "{version}"
-    assembly_informational_version: "{version}"
-
-  install:
-    - nuget restore
-
-  build:
-    project: visor.sln
-    verbosity: minimal
-
-  artifacts:
-    - path: visor\bin\$(configuration)\*.vsix
-      name: VsPackage
-
-  after_test:
-    - packages\OpenCover.4.5.3522\OpenCover.Console.exe -register:user -filter:"+[Visor*]* -[Visor.*Template*]*" -excludebyattribute:"ExcludeFromCodeCoverage" -hideskipped:All -target:"packages\NUnit.Runners.2.6.4\tools\nunit-console.exe" -targetargs:"/noshadow /domain:single Visor.Lib.Tests\bin\%CONFIGURATION%\Visor.Lib.Tests.dll Visor.Tests\bin\%CONFIGURATION%\Visor.Tests.dll" -output:coverage.xml
-    - packages\coveralls.io.1.1.81\tools\coveralls.net.exe --opencover coverage.xml
-
-  deploy:
-  - provider: GitHub
-    release: $(appveyor_build_version)
-    auth_token:
-      secure: OelvQ9JASXEQnzapY67bxJwmLIzuhi/XNgefjxySHUr0+Sc7hbLOiaRgvQcunRMe
-    artifact: VsPackage
-    draft: true
+- provider: GitHub
+  release: $(appveyor_repo_tag_name)
+  auth_token:
+    secure: OelvQ9JASXEQnzapY67bxJwmLIzuhi/XNgefjxySHUr0+Sc7hbLOiaRgvQcunRMe
+  artifact: VsPackage
+  on:
+    branch: production
+    appveyor_repo_tag: true

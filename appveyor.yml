@@ -3,7 +3,7 @@
     only:
       - production
 
-  version: 2.0.2
+  version: 2.0.4
 
   configuration: Release
 
@@ -29,7 +29,7 @@
     only:
       - beta
 
-  version: 2.0.3-beta
+  version: 2.0.5-beta
 
   configuration: Release
 
@@ -55,7 +55,7 @@
     only:
       - master
 
-  version: 2.0.3.{build}
+  version: 2.0.3-alpha.{build}
 
   configuration: Debug
 

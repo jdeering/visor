@@ -3,7 +3,7 @@
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011"
                  xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
   <Metadata>
-    <Identity Id="82c4bf28-c773-4b58-8f2e-7ba7885ca932" Version="2.0.2" Language="en-US" Publisher="Jason Deering" />
+    <Identity Id="82c4bf28-c773-4b58-8f2e-7ba7885ca932" Version="2.0.4" Language="en-US" Publisher="Jason Deering" />
     <DisplayName>Visor</DisplayName>
     <Description>Visual Studio for Repgen</Description>
     <MoreInfo>https://github.com/jdeering/visor</MoreInfo>

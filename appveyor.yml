@@ -22,8 +22,8 @@
     verbosity: quiet
 
   artifacts:
-    - path: *.vsix
-	  name: VSPackages
+    - path: /.*\.vsix/
+      name: VSPackages
 
 -
   branches:
@@ -49,8 +49,8 @@
     verbosity: normal
 
   artifacts:
-    - path: *.vsix
-	  name: VSPackages
+    - path: /.*\.vsix/
+      name: VSPackages
 
 -
   branches:

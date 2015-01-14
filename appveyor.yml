@@ -50,6 +50,7 @@ deploy:
     auth_token:
       secure: OelvQ9JASXEQnzapY67bxJwmLIzuhi/XNgefjxySHUr0+Sc7hbLOiaRgvQcunRMe
     artifact: VsPackage
+    prerelease: false
     on:
       branch: production
       appveyor_repo_tag: true

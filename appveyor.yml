@@ -3,7 +3,7 @@
     only:
       - production
 
-  version: 2.0.4
+  version: 2.0.6
 
   configuration: Release
 
@@ -22,15 +22,14 @@
     verbosity: quiet
 
   artifacts:
-    - path: /.*\.vsix/
-      name: VSPackages
+    - path: Visor\bin\%CONFIGURATION%\Visor.vsix
 
 -
   branches:
     only:
       - beta
 
-  version: 2.0.5-beta.{build}
+  version: 2.0.7-beta
 
   configuration: Release
 
@@ -46,18 +45,17 @@
 
   build:
     project: visor.sln
-    verbosity: normal
+    verbosity: quiet
 
   artifacts:
-    - path: /.*\.vsix/
-      name: VSPackages
+    - path: Visor\bin\%CONFIGURATION%\Visor.vsix
 
 -
   branches:
     only:
       - master
 
-  version: 2.0.5-alpha.{build}
+  version: 2.0.7-alpha.{build}
 
   configuration: Debug
 

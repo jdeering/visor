@@ -13,7 +13,6 @@ namespace Visor.Lib
 {
     public class SymDirectory
     {
-        private string[] _extensionsToKeep;
         private SymSession _session;
         private ISymSocket _socket;
 

@@ -17,8 +17,7 @@ namespace Visor.LanguageService
             NonGrammarTerminals.Add(blockComment);
 
             var number = new NumberLiteral("number", NumberOptions.IntOnly);
-            var money = new NumberLiteral("money", NumberOptions.AllowSign);
-            var rate = new NumberLiteral("rate");
+            var floatValue = new NumberLiteral("float", NumberOptions.AllowSign);
             var date = new StringLiteral("date", "'");
             var character = new StringLiteral("character", "\"");
 
@@ -189,9 +188,9 @@ namespace Visor.LanguageService
                 = number
                   | character
                   | date
-                  | rate
-                  | rate + "%"
-                  | money;
+                  | floatValue
+                  | floatValue + ToTerm("%")
+                  | ToTerm("$") + floatValue;
 
             arrayParen.Rule
                 = ToTerm("(") + arraySize + ")";

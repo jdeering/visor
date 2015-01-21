@@ -36,7 +36,7 @@ namespace Visor.Lib.Tests
         public void Null_IsNotBlank_ReturnsFalse()
         {
             string s = null;
-            s.IsBlank().Should().BeFalse();
+            s.IsNotBlank().Should().BeFalse();
         }
 
         [Test]
@@ -50,7 +50,7 @@ namespace Visor.Lib.Tests
         public void EmptyString_IsNotBlank_ReturnsFalse()
         {
             string s = string.Empty;
-            s.IsBlank().Should().BeFalse();
+            s.IsNotBlank().Should().BeFalse();
         }
 
         [Test]
@@ -64,7 +64,7 @@ namespace Visor.Lib.Tests
         public void Space_IsNotBlank_ReturnsTrue()
         {
             string s = " ";
-            s.IsBlank().Should().BeTrue();
+            s.IsNotBlank().Should().BeTrue();
         }
     }
 }

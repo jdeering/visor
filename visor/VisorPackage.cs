@@ -20,11 +20,13 @@ using Symitar;
 using Visor.Extensions;
 using Visor.LanguageService;
 using Visor.Lib;
+using Visor.Net.Ftp;
 using Visor.Options;
 using Visor.Project;
 using Visor.ReportRunner;
 using Visor.Toolbar;
 using File = System.IO.File;
+using Task = System.Threading.Tasks.Task;
 
 namespace Visor
 {
@@ -89,7 +91,7 @@ namespace Visor
         public ToolWindowPane ReportRunnerToolWindow;
         private List<string> _answers;
         private string _comboSelection;
-        private SymDirectory _currentDirectory;
+        private SymDirectory _currentSymDirectory;
         private List<SymDirectory> _directories;
         private IKernel _kernel;
 
@@ -160,7 +162,7 @@ namespace Visor
 
             if (item == null || dte == null) return;
 
-            item.Enabled = (_currentDirectory != null && dte.ActiveDocument != null);
+            item.Enabled = (_currentSymDirectory != null && dte.ActiveDocument != null);
         }
 
         private void CommandRequiresLogin(object sender, EventArgs e)
@@ -170,7 +172,7 @@ namespace Visor
 
             if (item == null || dte == null) return;
 
-            item.Enabled = (_currentDirectory != null && dte.ActiveDocument != null && _currentDirectory.LoggedIn);
+            item.Enabled = (_currentSymDirectory != null && dte.ActiveDocument != null && _currentSymDirectory.LoggedIn);
         }
 
         private void LoadSymDirectoryCombo(object sender, EventArgs e)
@@ -211,7 +213,7 @@ namespace Visor
                     string host = _comboSelection.Substring(openParen + 1, length);
                     int institution = int.Parse(_comboSelection.Split(' ')[1]);
 
-                    _currentDirectory = _directories.Single(x => x.Institution == institution && x.Server.Host == host);
+                    _currentSymDirectory = _directories.Single(x => x.Institution == institution && x.Server.Host == host);
                 }
                 else if (output != IntPtr.Zero)
                 {
@@ -219,12 +221,12 @@ namespace Visor
                 }
             }
 
-            if (_directories == null || _currentDirectory != null) return;
+            if (_directories == null || _currentSymDirectory != null) return;
 
             if (_directories.Count > 0)
             {
-                _currentDirectory = _directories.First();
-                _comboSelection = _currentDirectory.ToString();
+                _currentSymDirectory = _directories.First();
+                _comboSelection = _currentSymDirectory.ToString();
             }
         }
 
@@ -238,91 +240,117 @@ namespace Visor
             _directories.AddRange(options.Directories);
         }
 
-        private void UploadCurrentFile(object sender, EventArgs e)
+        private async void UploadCurrentFile(object sender, EventArgs e)
         {
-            var worker = new BackgroundWorker();
+            var currentFile = GetCurrentFilePath();
 
-            worker.DoWork += (o, args) =>
+            try
+            {
+                var fileUploaded = await Task.Run(() =>
                 {
-                    string currentFile = GetCurrentFilePath();
-
-                    int result = DialogResult.Yes;
-                    if (_currentDirectory.FileExists(currentFile))
+                    var result = DialogResult.Yes;
+                    if (_currentSymDirectory.FileExists(currentFile))
                         result = Confirmation("File Exists on Server", " Upload?");
 
-                    if (result == DialogResult.Yes)
-                    {
-                        _currentDirectory.UploadFile(currentFile, FtpUploadSuccess, FtpError);
-                    }
-                };
-
-            worker.RunWorkerAsync();
+                    return result == DialogResult.Yes ? _currentSymDirectory.UploadFile(currentFile) : "";
+                });
+                FtpUploadSuccess(fileUploaded);
+            }
+            catch (FtpException ex)
+            {
+                FtpError(ex);
+            }
+            catch (Exception ex)
+            {
+                ErrorMessage("Error!", ex.Message);
+            }
         }
 
         private void FtpUploadSuccess(string fileName)
         {
-            MessageBox("File Uploaded",
-                       String.Format("{0} successfully uploaded to {1}",
-                                     Path.GetFileNameWithoutExtension(fileName),
-                                     _currentDirectory));
-        }
-
-        private void FtpDownloadSuccess(string fileName)
-        {
-            // Not showing a message on success
+            if (fileName.IsBlank()) return;
+            var message = String.Format("{0} successfully uploaded to {1}", Path.GetFileNameWithoutExtension(fileName), _currentSymDirectory);
+            MessageBox("File Uploaded", message);
         }
 
         private void FtpError(Exception exception)
         {
-            ErrorMessage("File Transfer Failed!", exception.Message);
+            FtpError(exception.Message);
+        }
+
+        private void FtpError(string message)
+        {
+            ErrorMessage("File Transfer Failed!", message);
         }
 
         private void DownloadCurrentFile(object sender, EventArgs e)
         {
             var path = GetCurrentFilePath();
-            _currentDirectory.DownloadFile(path, FtpDownloadSuccess, FtpError);
+            try
+            {
+                var result = _currentSymDirectory.DownloadFile(path);
+                if(result.IsBlank()) FtpError("File not found.");
+            }
+            catch (FtpException ex)
+            {
+                FtpError(ex);
+            }
+            catch (Exception ex)
+            {
+                ErrorMessage("Error!", ex.Message);
+            }
         }
 
-        private void InstallCurrentFile(object sender, EventArgs e)
-        {
-            var worker = new BackgroundWorker();
-
-            worker.DoWork += (o, args) =>
-                {
-                    try
-                    {
-                        // Upload the current file and run the install on success
-                        _currentDirectory.UploadFile(GetCurrentFilePath(), RunInstall, FtpError);
-                    }
-                    catch (Exception exception)
-                    {
-                        ErrorMessage("Error Installing Specfile!", exception.Message);
-                    }
-                };
-
-            worker.RunWorkerAsync();
-        }
-
-        private void RunInstall(string fileName)
+        private async void InstallCurrentFile(object sender, EventArgs e)
         {
             try
             {
-                _currentDirectory.Connect();
-                _currentDirectory.Install(GetCurrentFilePath(), InstallSuccess, InstallFail);
+                var fileUploaded = await Task.Run(() =>
+                {
+                    return _currentSymDirectory.UploadFile(GetCurrentFilePath());
+                });
+                if (fileUploaded.IsNotBlank()) RunInstall(fileUploaded);
+            }
+            catch (FtpException ex)
+            {
+                FtpError(ex);
+            }
+            catch (Exception ex)
+            {
+                ErrorMessage("Error Installing Specfile!", ex.Message);
+            }
+        }
+
+        private async void RunInstall()
+        {
+            RunInstall(GetCurrentFilePath());
+        }
+
+        private async void RunInstall(string fileName)
+        {
+            _currentSymDirectory.Connect();
+            try
+            {
+                var result = await Task.Run(() =>
+                {
+                    return _currentSymDirectory.Install(fileName);
+                });
+
+                InstallSuccess(fileName, result);
             }
             catch (Exception e)
             {
-                ErrorMessage("Error Installing Specfile!", e.Message);
+                InstallFail(fileName, e.Message);
             }
             finally
             {
-                _currentDirectory.Disconnect();
+                _currentSymDirectory.Disconnect();
             }
         }
 
         private void InstallSuccess(string fileName, int installSize)
         {
-            MessageBox(String.Format("{0} successfully installed in {1}", fileName, _currentDirectory),
+            MessageBox(String.Format("{0} successfully installed in {1}", fileName, _currentSymDirectory),
                        String.Format("Install Size: {0:N0} Bytes", installSize));
         }
 
@@ -332,10 +360,8 @@ namespace Visor
                          errorMessage);
         }
 
-        private void RunCurrentFile(object sender, EventArgs e)
+        private async void RunCurrentFile(object sender, EventArgs e)
         {
-            var worker = new BackgroundWorker();
-
             _answers = new List<string>();
 
             string currentFile = GetCurrentFilePath();
@@ -359,20 +385,22 @@ namespace Visor
                 }
             }
 
-            worker.DoWork += (o, args) =>
+            try
+            {
+                var fileUploaded = await Task.Run(() =>
                 {
-                    try
-                    {
-                        // Upload the current file and run the install on success
-                        _currentDirectory.UploadFile(GetCurrentFilePath(), RunReport, FtpError);
-                    }
-                    catch (Exception exception)
-                    {
-                        ErrorMessage("Error Running Report!", exception.Message);
-                    }
-                };
-
-            worker.RunWorkerAsync();
+                    return _currentSymDirectory.UploadFile(GetCurrentFilePath());
+                });
+                if (fileUploaded.IsNotBlank()) RunReport(fileUploaded);
+            }
+            catch (FtpException ex)
+            {
+                FtpError(ex);
+            }
+            catch (Exception ex)
+            {
+                ErrorMessage("Error Running Report!", ex.Message);
+            }
         }
 
         private List<ReportPrompt> GetPrompts(string path)
@@ -386,7 +414,7 @@ namespace Visor
 
             foreach (string line in lines)
             {
-                Match match = dateReadExpression.Match(line);
+                var match = dateReadExpression.Match(line);
                 if (match.Success)
                 {
                     string text = GetFullPromptText(match.Groups["prompts"].Captures);
@@ -413,9 +441,9 @@ namespace Visor
             var promptList = new Regex(@"\""(?<prompt>[^\""]*)\""\s*,?\s*", RegexOptions.IgnoreCase);
             foreach (Capture c in captures)
             {
-                MatchCollection promptMatches = promptList.Matches(c.Value);
+                var promptMatches = promptList.Matches(c.Value);
 
-                string[] promptTextArray = promptMatches.Cast<Match>()
+                var promptTextArray = promptMatches.Cast<Match>()
                                                         .SelectMany(m => m.Groups["prompt"].Captures.Cast<Capture>())
                                                         .Select(p => p.Value).ToArray();
                 return String.Join("\n", promptTextArray);
@@ -427,12 +455,12 @@ namespace Visor
         {
             ShowReportWindow();
             Dispatch(
-                () => ((ReportRunnerControl) ReportRunnerToolWindow.Content).AddBatchJob(fileName, _currentDirectory));
+                () => ((ReportRunnerControl) ReportRunnerToolWindow.Content).AddBatchJob(fileName, _currentSymDirectory));
 
             try
             {
-                _currentDirectory.Connect();
-                _currentDirectory.Run(fileName, _answers, UpdateReportStatus, ReportCompleted);
+                _currentSymDirectory.Connect();
+                _currentSymDirectory.Run(fileName, _answers, UpdateReportStatus, ReportCompleted);
             }
             catch (Exception e)
             {
@@ -448,11 +476,10 @@ namespace Visor
         private void UpdateReportStatus(SymSession.RunState state, object data)
         {
             string file;
-            int sequence;
             switch (state)
             {
                 case SymSession.RunState.Running:
-                    sequence = (int) data;
+                    var sequence = (int) data;
                     ((ReportRunnerControl) ReportRunnerToolWindow.Content).SetSequence(sequence);
                     ((ReportRunnerControl) ReportRunnerToolWindow.Content).UpdateStatus(sequence, "Running");
                     break;
@@ -484,7 +511,7 @@ namespace Visor
                 var jobSequence = (int) ((object[]) args.Result)[1];
                 var outputSequence = (int) ((object[]) args.Result)[2];
 
-                List<Report> reports = _currentDirectory.GetReports(outputSequence);
+                List<Report> reports = _currentSymDirectory.GetReports(outputSequence);
 
                 Dispatch(
                     () => ((ReportRunnerControl) ReportRunnerToolWindow.Content).UpdateStatus(jobSequence, "Complete"));
@@ -502,7 +529,7 @@ namespace Visor
                 }
             }
 
-            _currentDirectory.Disconnect();
+            _currentSymDirectory.Disconnect();
         }
 
         private void ShowReportWindow()

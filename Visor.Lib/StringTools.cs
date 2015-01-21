@@ -13,5 +13,15 @@
         {
             return _cryptoService.Decrypt(b);
         }
+
+        public static bool IsBlank(this string s)
+        {
+            return string.IsNullOrEmpty(s);
+        }
+
+        public static bool IsNotBlank(this string s)
+        {
+            return !string.IsNullOrEmpty(s);
+        }
     }
 }

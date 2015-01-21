@@ -81,72 +81,46 @@ namespace Visor.Lib
             Connect();
         }
 
-        public bool FileExists(string path)
+        public bool FileExists(string source)
         {
             var request = new FtpRequest(Server.Host, Server.FtpPort, Server.AixUsername, Server.AixPassword);
 
-            string remoteFolder = Utilities.ContainingFolder(Institution, FileUtilities.GetSymitarFileType(path));
-            string remotePath = String.Format("{0}/{1}", remoteFolder, Path.GetFileNameWithoutExtension(path));
+            var remoteFolder = Utilities.ContainingFolder(Institution, FileUtilities.GetSymitarFileType(source));
+            var remotePath = String.Format("{0}/{1}", remoteFolder, Path.GetFileNameWithoutExtension(source));
 
             return request.FileExists(remotePath);
         }
 
-        public void UploadFile(string path, Action<string> successCallback, Action<FtpException> errorCallback)
+        public string UploadFile(string source)
         {
             var request = new FtpRequest(Server.Host, Server.FtpPort, Server.AixUsername, Server.AixPassword);
 
-            string destinationFolder = Utilities.ContainingFolder(Institution, FileUtilities.GetSymitarFileType(path));
+            var destinationFolder = Utilities.ContainingFolder(Institution, FileUtilities.GetSymitarFileType(source));
+            var destination = String.Format("{0}/{1}", destinationFolder, Path.GetFileNameWithoutExtension(source));
 
-            request.Upload(
-                path,
-                String.Format("{0}/{1}", destinationFolder, Path.GetFileNameWithoutExtension(path)),
-                successCallback,
-                errorCallback,
-                FtpTransferType.Text
-                );
+            return request.Upload(source, destination, FtpTransferType.Text);
         }
 
-        public void DownloadFile(string path, Action<string> successCallback, Action<FtpException> errorCallback)
+        public string DownloadFile(string destination)
         {
             var request = new FtpRequest(Server.Host, Server.FtpPort, Server.AixUsername, Server.AixPassword);
-            var fileType = FileUtilities.GetSymitarFileType(path);
+            var fileType = FileUtilities.GetSymitarFileType(destination);
             var sourceFolder = Utilities.ContainingFolder(Institution, fileType);
-            
-            request.Download(
-                String.Format("{0}/{1}", sourceFolder, Path.GetFileNameWithoutExtension(path)),
-                path,
-                successCallback,
-                errorCallback,
-                FtpTransferType.Text
-                );
+
+            var source = String.Format("{0}/{1}", sourceFolder, Path.GetFileNameWithoutExtension(destination));
+
+            return request.Download(source, destination, FtpTransferType.Text);
         }
 
-        public void Install(string path, Action<string, int> successCallback, Action<string, string> errorCallback)
+        public int Install(string path)
         {
             var file = FileUtilities.GetSymitarFile(path);
 
-            SpecfileResult result;
-            try
-            {
-                if (!_session.LoggedIn)
-                    Reset();
+            if (!_session.LoggedIn) Reset();
+            var result = _session.FileInstall(file);
 
-                result = _session.FileInstall(file);
-            }
-            catch (Exception e)
-            {
-                errorCallback(file.Name, e.Message);
-                return;
-            }
-
-            if (result.PassedCheck)
-            {
-                successCallback(file.Name, result.InstallSize);
-            }
-            else
-            {
-                errorCallback(file.Name, result.ErrorMessage);
-            }
+            if (!result.PassedCheck) throw new Exception(result.ErrorMessage);
+            return result.InstallSize;
         }
 
         public void Run(string fileName, List<string> promptAnswers, SymSession.FileRunStatus progressHandler,

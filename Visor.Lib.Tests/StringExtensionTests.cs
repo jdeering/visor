@@ -24,5 +24,47 @@ namespace Visor.Lib.Tests
         {
             (new byte[0]).Decrypt().Should().BeEmpty();
         }
+
+        [Test]
+        public void Null_IsBlank_ReturnsTrue()
+        {
+            string s = null;
+            s.IsBlank().Should().BeTrue();
+        }
+
+        [Test]
+        public void Null_IsNotBlank_ReturnsFalse()
+        {
+            string s = null;
+            s.IsBlank().Should().BeFalse();
+        }
+
+        [Test]
+        public void EmptyString_IsBlank_ReturnsTrue()
+        {
+            string s = string.Empty;
+            s.IsBlank().Should().BeTrue();
+        }
+
+        [Test]
+        public void EmptyString_IsNotBlank_ReturnsFalse()
+        {
+            string s = string.Empty;
+            s.IsBlank().Should().BeFalse();
+        }
+
+        [Test]
+        public void Space_IsBlank_ReturnsFalse()
+        {
+            string s = " ";
+            s.IsBlank().Should().BeFalse();
+        }
+
+        [Test]
+        public void Space_IsNotBlank_ReturnsTrue()
+        {
+            string s = " ";
+            s.IsBlank().Should().BeTrue();
+        }
     }
 }

@@ -321,11 +321,6 @@ namespace Visor
             }
         }
 
-        private async void RunInstall()
-        {
-            RunInstall(GetCurrentFilePath());
-        }
-
         private async void RunInstall(string fileName)
         {
             _currentSymDirectory.Connect();

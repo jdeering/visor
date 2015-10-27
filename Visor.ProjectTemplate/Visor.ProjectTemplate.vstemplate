@@ -7,7 +7,7 @@
     <SortOrder>1000</SortOrder>
     <TemplateID>0c04ce45-ceda-4ea7-a36e-657da9177a7b</TemplateID>
     <CreateNewFolder>true</CreateNewFolder>
-    <DefaultName>Project.symproj</DefaultName>
+    <DefaultName>RepgenProject</DefaultName>
     <ProvideDefaultName>true</ProvideDefaultName>
   </TemplateData>
   <TemplateContent>

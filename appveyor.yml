@@ -4,7 +4,7 @@ branches:
     - master
     - production
 
-version: 2.0.6.{build}
+version: 2.1.0.{build}
 
 configuration: Release
 
